@@ -1,97 +1,73 @@
 # ReqRes API QA Portfolio
 
-This repository contains a professional API testing suite for the [ReqRes](https://reqres.in) mock API, demonstrating functional test coverage, automated assertions, and professional defect documentation.
+Portfólio de testes de API focado na validação de endpoints do ReqRes. O projeto demonstra boas práticas em testes, estruturação e documentação de defeitos de API.
 
 ## Objective
 
-The purpose of this portfolio is to demonstrate practical API testing skills, including creating structured test cases based on BDD principles, automating validations using Postman and Newman, organizing test execution suites, and professionally documenting observed deviations from standard REST conventions.
+O objetivo principal deste portfólio é demonstrar experiência técnica e prática com testes de API utilizando Postman, criação de casos de teste, validação estrutural (JSON) e identificação de comportamentos divergentes do padrão REST.
 
 ## Stack
 
-- **Postman**: API testing and collection management.
-- **Newman**: CLI execution of Postman collections.
-- **REST API**: Architecture tested.
-- **JSON**: Data format validated.
-- **HTTP**: Protocol and status code validation.
+- Postman
+- REST API
+- JSON
+- HTTP
+- Git/GitHub
 
 ## Test Coverage
 
-The test cases cover positive and negative scenarios across multiple HTTP methods on the Users resource.
-
-| Case ID   | Method | Scenario                                      | Expected Result                                   |
-|-----------|--------|-----------------------------------------------|---------------------------------------------------|
-| CT001.001 | GET    | Retrieve an existing user by ID               | 200 OK, valid JSON object                         |
-| CT001.002 | GET    | Retrieve a non-existent user by ID            | 404 Not Found, empty JSON object                  |
-| CT001.003 | GET    | Retrieve a user without authentication        | 401 Unauthorized, auth error message              |
-| CT002.001 | POST   | Create a user with valid data                 | 201 Created, contains ID and createdAt timestamp  |
-| CT002.002 | POST   | Create a user without authentication          | 401 Unauthorized, auth error message              |
-| CT002.003 | POST   | Attempt to create a user with an empty body   | 400 Bad Request                                   |
-| CT003.001 | PUT    | Update an existing user with valid data       | 200 OK, contains updatedAt timestamp              |
-| CT003.002 | PUT    | Update a user without authentication          | 401 Unauthorized, auth error message              |
-| CT003.003 | PUT    | Attempt to update a non-existent user         | 404 Not Found                                     |
-| CT003.004 | PUT    | Attempt to update a user with an empty body   | 400 Bad Request                                   |
-
-*For full BDD details, please refer to the [Test Cases Document](test-cases/test-cases-reqres-api.md).*
+| ID | Method | Scenario | Type |
+|----|--------|----------|------|
+| CT001.001 | GET | Buscando Usuario por ID cadastrado na base | Positive |
+| CT001.002 | GET | Buscando Usuario por ID Não existente na base | Negative |
+| CT001.003 | GET | Buscando Usuario por ID sem autenticação | Negative |
+| CT002.001 | POST | Criando um Usuario novo na base com todos os dados corretos | Positive |
+| CT002.002 | POST | Criando um Usuario novo na base sem a x-api-key | Negative |
+| CT002.003 | POST | Criando um Usuario novo na base passando o body vazio | Negative |
+| CT003.001 | PUT | Atualizando um Usuario na base estando autenticado | Positive |
+| CT003.002 | PUT | Atualizando um Usuario na base não estando autenticado | Negative |
+| CT003.003 | PUT | Atualizando um Usuario na base com ID inexistente | Negative |
+| CT003.004 | PUT | Atualizando um Usuario na base passando body vazio | Negative |
 
 ## Repository Structure
 
-```
-/
-├── README.md                                          # This file
-├── .gitignore                                         # Standard git ignores
-├── postman/
-│   └── ReqRes_API_QA_Portfolio.postman_collection.json # Automated test collection
-├── test-cases/
-│   ├── test-cases-reqres-api.xlsx                     # Original test case spreadsheet
-│   └── test-cases-reqres-api.md                       # Markdown version for easy reading
-└── docs/
-    └── test-findings.md                               # Professional documentation of test observations
-```
+- `README.md`: Este documento com a visão geral do projeto.
+- `postman/ReqRes_API_QA_Portfolio.postman_collection.json`: Collection contendo as requisições automatizadas do Postman.
+- `test-cases/test-cases.md` & `test-cases.xlsx`: Descrição detalhada dos casos de teste.
+- `docs/test-findings.md`: Documentação de observações, comportamentos inesperados e falhas estruturais.
 
 ## Running the Tests
 
-To execute these tests locally via the command line using Newman:
-
-1. **Install Node.js** (if not already installed).
-2. **Install Newman** globally:
-   ```bash
-   npm install -g newman
-   ```
-3. **Execute the Collection**:
-   Since the API requires an API key for this specific mock setup, you must pass the environment variable during runtime. Replace `YOUR_API_KEY` with a valid key.
-   ```bash
-   newman run postman/ReqRes_API_QA_Portfolio.postman_collection.json --env-var "api-key=YOUR_API_KEY"
-   ```
-
-*Note: For testing in the Postman UI, import the JSON file and set the `api-key` in your Environment Variables.*
+1. Instale o Newman (CLI para Postman) via NPM:
+   `npm install -g newman`
+2. Execute os testes informando as variáveis:
+   `newman run postman/ReqRes_API_QA_Portfolio.postman_collection.json --env-var "baseUrl=https://reqres.in" --env-var "api-key=YOUR_API_KEY"`
 
 ## Environment Variables
 
-The collection utilizes variables to ensure flexibility and security:
-- `{{baseUrl}}`: Defaults to `https://reqres.in`. Prevents hardcoded URLs across requests.
-- `{{api-key}}`: The authentication token required for endpoints. **This is intentionally left empty in the versioned collection** to prevent secret leakage. You must provide it locally to run the tests.
+- `{{baseUrl}}`: URL base da API (https://reqres.in).
+- `{{api-key}}`: Chave de autenticação necessária para as requisições. Por motivos de segurança, esta variável fica vazia no repositório.
 
-## Test Automation
+## Automated Assertions
 
-The Postman collection includes automated assertions (`pm.test`) to validate:
-- **HTTP Status Codes** (e.g., asserting `200`, `201`, `401`, `404`).
-- **Response Structure** (e.g., verifying responses are valid JSON).
-- **Data Integrity** (e.g., ensuring `id`, `createdAt`, or `updatedAt` properties are returned when expected).
-- **Negative Scenarios** (e.g., asserting expected client errors).
+A collection contém scripts `pm.test` que realizam as seguintes validações:
+- Status Code (ex: 200, 201, 401, 400, 404).
+- Presença de campos obrigatórios no response body (ex: `id`, `createdAt`, `updatedAt`).
+- Estrutura JSON válida.
 
 ## Test Findings
 
-During testing, some behaviors deviated from expected standard REST conventions (e.g., accepting empty request bodies). These have been documented objectively as **Validation Findings**.
-
-Read the full report in [Test Findings](docs/test-findings.md).
+Comportamentos que não seguem o padrão REST foram identificados (ex: aceitação de requests com body vazio). Eles estão documentados no arquivo `docs/test-findings.md`.
 
 ## Skills Demonstrated
 
 - API Testing
-- Test Case Design (BDD)
-- Positive and Negative Testing
-- Postman (Collections, Variables, Scripts)
-- REST API Conventions
-- HTTP Status Validation
-- Defect/Finding Documentation
-- Git/GitHub (Security and Organization)
+- Test Case Design
+- Positive Testing
+- Negative Testing
+- Authentication Testing
+- REST
+- JSON
+- HTTP
+- Postman
+- Git/GitHub
