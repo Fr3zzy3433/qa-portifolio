@@ -1,451 +1,453 @@
 {
-  "info": {
-    "_postman_id": "1da5489a-e8e3-4b6e-94e8-7e6818ce3fda",
-    "name": "ReqRes API - QA Portifolio",
-    "description": "## ReqRes API – QA Portfolio\n\nThis collection contains functional test cases for the [ReqRes](https://reqres.in) public API, organized as a QA portfolio to demonstrate API testing practices using Postman.\n\nThe tests cover the **Users** resource and are grouped into two modules:\n\n### Usuários – Busca (GET)\n\nValidates the behavior of the `GET /api/users/{id}` endpoint across different scenarios:\n\n- **CT001.001** – Retrieve a user by a valid existing ID (happy path)\n    \n- **CT001.002** – Retrieve a user by a non-existent ID (expected 404)\n    \n- **CT001.003** – Retrieve a user without authentication (access control validation)\n    \n\n### Usuários – Criação (POST)\n\nValidates the behavior of the `POST /api/users` endpoint:\n\n- **CT002.001** – Create a user with valid data (happy path)\n    \n- **CT002.002** – Attempt to create a user without authentication (access control validation)\n    \n- **CT002.003** – Attempt to create a user with an empty request body (input validation)\n    \n\n---\n\nEach test case follows a structured naming convention (`CT[module].[case]`) to make it easy to trace requirements and results. The collection uses the `ReqRes` environment for variable management (e.g., `api-key`).",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "28586720"
-  },
-  "item": [
-    {
-      "name": "Usuários - Busca (GET)",
-      "item": [
-        {
-          "name": "CT001.001 - Buscar usuário por ID existente",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "x-api-key",
-                "value": "{{api-key}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/users/2",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "users",
-                "2"
-              ]
-            }
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
-                  "pm.test('Response must be valid JSON', function () { pm.response.to.be.json; });",
-                  "pm.test('Response contains data object', function () { pm.expect(pm.response.json()).to.have.property('data'); });"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
-        },
-        {
-          "name": "CT001.002 - Buscar usuário por ID inexistente",
-          "request": {
-            "method": "GET",
-            "header": [
-              {
-                "key": "x-api-key",
-                "value": "{{api-key}}",
-                "type": "text"
-              }
-            ],
-            "url": {
-              "raw": "{{baseUrl}}/api/users/900",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "users",
-                "900"
-              ]
-            }
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code is 404', function () { pm.response.to.have.status(404); });",
-                  "pm.test('Response must be valid JSON', function () { pm.response.to.be.json; });",
-                  "pm.test('Response body is empty object', function () { pm.expect(Object.keys(pm.response.json()).length).to.eql(0); });"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
-        },
-        {
-          "name": "CT001.003 - Buscar usuário sem autenticação",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/api/users/2",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "users",
-                "2"
-              ]
-            }
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
-        }
-      ]
+    "info": {
+        "_postman_id": "1da5489a-e8e3-4b6e-94e8-7e6818ce3fda",
+        "name": "ReqRes API - QA Portfolio",
+        "description": "## ReqRes API \u2013 QA Portfolio\n\nThis collection contains functional test cases for the [ReqRes](https://reqres.in) public API, organized as a QA portfolio to demonstrate API testing practices using Postman.\n\nThe tests cover the **Users** resource and are grouped into two modules:\n\n### Usu\u00e1rios \u2013 Busca (GET)\n\nValidates the behavior of the `GET /api/users/{id}` endpoint across different scenarios:\n\n- **CT001.001** \u2013 Retrieve a user by a valid existing ID (happy path)\n    \n- **CT001.002** \u2013 Retrieve a user by a non-existent ID (expected 404)\n    \n- **CT001.003** \u2013 Retrieve a user without authentication (access control validation)\n    \n\n### Usu\u00e1rios \u2013 Cria\u00e7\u00e3o (POST)\n\nValidates the behavior of the `POST /api/users` endpoint:\n\n- **CT002.001** \u2013 Create a user with valid data (happy path)\n    \n- **CT002.002** \u2013 Attempt to create a user without authentication (access control validation)\n    \n- **CT002.003** \u2013 Attempt to create a user with an empty request body (input validation)\n    \n\n---\n\nEach test case follows a structured naming convention (`CT[module].[case]`) to make it easy to trace requirements and results. The collection uses the `ReqRes` environment for variable management (e.g., `api-key`).",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+        "_exporter_id": "28586720"
     },
-    {
-      "name": "Usuários - Criação (POST)",
-      "item": [
+    "item": [
         {
-          "name": "CT002.001 - Criar usuário com dados válidos",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "x-api-key",
-                "value": "{{api-key}}",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"name\": \"Logan\",\r\n  \"job\": \"QA Junior\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
+            "name": "Usu\u00e1rios - Busca (GET)",
+            "item": [
+                {
+                    "name": "CT001.001 - Buscar usu\u00e1rio por ID existente",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{api-key}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/2",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "2"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                                    "pm.test('Response must be valid and have a body', function () { pm.response.to.be.withBody; pm.response.to.be.json; });",
+                                    "pm.test('Response contains data object', function () { pm.expect(pm.response.json()).to.have.property('data'); });"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "CT001.002 - Buscar usu\u00e1rio por ID inexistente",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{api-key}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/900",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "900"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 404', function () { pm.response.to.have.status(404); });",
+                                    "pm.test('Response must be valid and have a body', function () { pm.response.to.be.withBody; pm.response.to.be.json; });",
+                                    "pm.test('Response body is empty object', function () { pm.expect(Object.keys(pm.response.json()).length).to.eql(0); });"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "CT001.003 - Buscar usu\u00e1rio sem autentica\u00e7\u00e3o",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/2",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "2"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
                 }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/users",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "users"
-              ]
-            }
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
-                  "pm.test('Response contains id', function () { pm.expect(pm.response.json()).to.have.property('id'); });",
-                  "pm.test('Response contains createdAt', function () { pm.expect(pm.response.json()).to.have.property('createdAt'); });"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
+            ]
         },
         {
-          "name": "CT002.002 - Criar usuário sem autenticação",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "x-api-key",
-                "value": "",
-                "type": "text",
-                "disabled": true
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n  \"name\": \"Logan\",\r\n  \"job\": \"QA Junior\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
+            "name": "Usu\u00e1rios - Cria\u00e7\u00e3o (POST)",
+            "item": [
+                {
+                    "name": "CT002.001 - Criar usu\u00e1rio com dados v\u00e1lidos",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{api-key}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n  \"name\": \"Logan\",\r\n  \"job\": \"QA Junior\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                                    "pm.test('Response must be valid and have a body', function () { pm.response.to.be.withBody; pm.response.to.be.json; });",
+                                    "pm.test('Response contains id', function () { pm.expect(pm.response.json()).to.have.property('id'); });",
+                                    "pm.test('Response contains createdAt', function () { pm.expect(pm.response.json()).to.have.property('createdAt'); });"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "CT002.002 - Criar usu\u00e1rio sem autentica\u00e7\u00e3o",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "",
+                                "type": "text",
+                                "disabled": true
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n  \"name\": \"Logan\",\r\n  \"job\": \"QA Junior\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "CT002.003 - Criar usu\u00e1rio com body vazio",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{api-key}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
                 }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/users",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "users"
-              ]
-            }
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
+            ]
         },
         {
-          "name": "CT002.003 - Criar usuário com body vazio",
-          "request": {
-            "method": "POST",
-            "header": [
-              {
-                "key": "x-api-key",
-                "value": "{{api-key}}",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{}",
-              "options": {
-                "raw": {
-                  "language": "json"
+            "name": "Usu\u00e1rios - Atualizar (PUT)",
+            "item": [
+                {
+                    "name": "CT003.001 - Atualizando um Usuario na base estando autenticado",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{api-key}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"name\": \"Teste de PUT\",\r\n    \"job\": \"QA Junior\"\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/2",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "2"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                                    "pm.test('Response must be valid and have a body', function () { pm.response.to.be.withBody; pm.response.to.be.json; });",
+                                    "pm.test('Response contains updatedAt', function () { pm.expect(pm.response.json()).to.have.property('updatedAt'); });"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "CT003.002 - Atualizando um Usuario na base n\u00e3o estando autenticado",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{api-key}}",
+                                "type": "text",
+                                "disabled": true
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"name\": \"Teste de PUT\",\r\n    \"job\": \"QA Junior\"\r\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/2",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "2"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "CT003.003 - Atualizando um Usuario na base com ID inexistente",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{api-key}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n    \"name\": \"Teste de PUT\",\r\n    \"job\": \"QA Junior\"\r\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/999",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "999"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 404', function () { pm.response.to.have.status(404); });"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "CT003.004 - Atualizando um Usuario na base passando body vazio",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "x-api-key",
+                                "value": "{{api-key}}",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\r\n\r\n}",
+                            "options": {
+                                "raw": {
+                                    "language": "json"
+                                }
+                            }
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/api/users/2",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "api",
+                                "users",
+                                "2"
+                            ]
+                        }
+                    },
+                    "response": [],
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ]
                 }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/users",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "users"
-              ]
-            }
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
+            ]
         }
-      ]
-    },
-    {
-      "name": "Usuários - Atualizar (PUT)",
-      "item": [
+    ],
+    "variable": [
         {
-          "name": "CT003.001 - Atualizando um Usuario na base estando autenticado",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "x-api-key",
-                "value": "{{api-key}}",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Teste de PUT\",\r\n    \"job\": \"QA Junior\"\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/users/2",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "users",
-                "2"
-              ]
-            }
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
-                  "pm.test('Response contains updatedAt', function () { pm.expect(pm.response.json()).to.have.property('updatedAt'); });"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
+            "key": "baseUrl",
+            "value": "https://reqres.in",
+            "type": "string"
         },
         {
-          "name": "CT003.002 - Atualizando um Usuario na base não estando autenticado",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "x-api-key",
-                "value": "{{api-key}}",
-                "type": "text",
-                "disabled": true
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Teste de PUT\",\r\n    \"job\": \"QA Junior\"\r\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/users/2",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "users",
-                "2"
-              ]
-            }
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
-        },
-        {
-          "name": "CT003.003 - Atualizando um Usuario na base com ID inexistente",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "x-api-key",
-                "value": "{{api-key}}",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n    \"name\": \"Teste de PUT\",\r\n    \"job\": \"QA Junior\"\r\n}"
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/users/999",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "users",
-                "999"
-              ]
-            }
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code is 404', function () { pm.response.to.have.status(404); });"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
-        },
-        {
-          "name": "CT003.004 - Atualizando um Usuario na base passando body vazio",
-          "request": {
-            "method": "PUT",
-            "header": [
-              {
-                "key": "x-api-key",
-                "value": "{{api-key}}",
-                "type": "text"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\r\n\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            },
-            "url": {
-              "raw": "{{baseUrl}}/api/users/2",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "users",
-                "2"
-              ]
-            }
-          },
-          "response": [],
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });"
-                ],
-                "type": "text/javascript"
-              }
-            }
-          ]
+            "key": "api-key",
+            "value": "",
+            "type": "string"
         }
-      ]
-    }
-  ],
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "https://reqres.in",
-      "type": "string"
-    },
-    {
-      "key": "api-key",
-      "value": "",
-      "type": "string"
-    }
-  ]
+    ]
 }
