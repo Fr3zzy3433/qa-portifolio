@@ -9,6 +9,8 @@ on:
 jobs:
   test-api:
     runs-on: ubuntu-latest
+    env:
+      REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -22,6 +24,4 @@ jobs:
         run: npm ci
 
       - name: Run Newman Tests
-        env:
-          REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
         run: npm run test:api
