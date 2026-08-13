@@ -12,5 +12,5 @@ This matrix maps the documented test cases to their implementation in the Postma
 | **CT002.003** | POST | `CT002.003 - Create user with empty body payload` | Test Hypothesis | FIND-001 | Automated |
 | **CT003.001** | PUT | `CT003.001 - Update existing user with valid data` | API Documentation | - | Automated |
 | **CT003.002** | PUT | `CT003.002 - Update existing user without authentication` | API Security | - | Automated |
-| **CT003.003** | PUT | `CT003.003 - Update user with non-existent ID` | HTTP Semantics | FIND-002 | Automated |
+| **CT003.003** | PUT | `CT003.003 - Update user with non-existent ID` | Test Hypothesis / API Domain Expectation | FIND-002 | Automated |
 | **CT003.004** | PUT | `CT003.004 - Update existing user with empty body payload` | Test Hypothesis | FIND-003 | Automated |

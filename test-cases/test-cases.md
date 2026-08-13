@@ -213,7 +213,7 @@ This document defines the functional test cases for the ReqRes API. These scenar
 - Status code is `404 Not Found` indicating the resource to update was not found.
 **Actual Result:**
 - The API returns `200 OK` and an `updatedAt` timestamp, successfully processing an update for a non-existent entity.
-**Oracle:** HTTP Semantics (RFC 7231).
+**Oracle:** Test Hypothesis / API Domain Expectation.
 **Type:** Edge Case / Negative Testing.
 **Automation Status:** Automated (Finding).
 

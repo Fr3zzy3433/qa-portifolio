@@ -19,14 +19,14 @@ It covers:
 | ID | Method | Endpoint | Scenario | Type | Oracle |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **CT001.001** | GET | `/api/users/{id}` | Retrieve existing user by ID | Positive | API Documentation |
-| **CT001.002** | GET | `/api/users/{id}` | Retrieve non-existent user by ID | Negative | HTTP Semantics |
+| **CT001.002** | GET | `/api/users/{id}` | Retrieve non-existent user by ID | Negative | Test Hypothesis / API Domain Expectation |
 | **CT001.003** | GET | `/api/users/{id}` | Retrieve user without authentication | Negative | API Security |
 | **CT002.001** | POST | `/api/users` | Create user with valid data | Positive | API Documentation |
 | **CT002.002** | POST | `/api/users` | Create user without authentication | Negative | API Security |
 | **CT002.003** | POST | `/api/users` | Create user with empty body payload | Negative/Edge | Test Hypothesis |
 | **CT003.001** | PUT | `/api/users/{id}` | Update existing user with valid data | Positive | API Documentation |
 | **CT003.002** | PUT | `/api/users/{id}` | Update existing user without authentication | Negative | API Security |
-| **CT003.003** | PUT | `/api/users/{id}` | Update user with non-existent ID | Negative/Edge | HTTP Semantics |
+| **CT003.003** | PUT | `/api/users/{id}` | Update user with non-existent ID | Negative/Edge | Test Hypothesis / API Domain Expectation |
 | **CT003.004** | PUT | `/api/users/{id}` | Update existing user with empty body payload | Negative/Edge | Test Hypothesis |
 
 ## Project Architecture
@@ -51,17 +51,20 @@ It covers:
 
 ## Running the Tests
 
-To run the automated tests locally, you need [Node.js](https://nodejs.org/) and [Newman](https://learning.postman.com/docs/collections/using-newman/installing-and-running-newman/) installed.
+To run the automated tests locally, you need [Node.js](https://nodejs.org/) installed.
 
-1. Install Newman globally:
+1. Install dependencies:
    ```bash
-   npm install -g newman
+   npm ci
    ```
-2. Run the tests using the collection file. Replace `YOUR_API_KEY` with a valid key generated from the ReqRes dashboard (as the API now requires it):
+2. Configure the API Key:
+   Create a `.env` file in the root directory and add your API key (do not commit this file):
+   ```env
+   REQRES_API_KEY=your_api_key_here
+   ```
+3. Run the tests:
    ```bash
-   newman run postman/ReqRes_API_QA_Portfolio.postman_collection.json \
-     --env-var "baseUrl=https://reqres.in" \
-     --env-var "api-key=YOUR_API_KEY"
+   npm run test:api
    ```
 
 ## Environment Variables

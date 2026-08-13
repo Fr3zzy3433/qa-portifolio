@@ -21,7 +21,7 @@ Because ReqRes acts as a public sandbox/mock API without strict business require
 
 **Classification:** Validation Finding
 **Test Case:** CT003.003
-**Oracle:** HTTP Semantics (RFC 7231)
+**Oracle:** Test Hypothesis / API Domain Expectation
 **Expected:** Status code `404 Not Found` informing that the requested resource could not be found for an update operation.
 **Observed:** The API returns `200 OK` with an `updatedAt` field, successfully accepting an update command for an entity that does not exist (e.g., ID `999`).
 **Evidence:** Executing `PUT /api/users/999` with valid payload returns `200 OK`.
