@@ -36,7 +36,7 @@ Test data is hardcoded for simplicity in this specific project context, chosen t
 Since ReqRes is a public mock API without a rigid set of explicit business requirements, results are evaluated against the following oracles:
 - **API Documentation:** The implicit behavior demonstrated on the ReqRes website.
 - **HTTP Semantics:** RFC conventions for RESTful APIs (e.g., `GET` on a non-existent resource should return `404`, `POST` should return `201`).
-- **Test Hypothesis:** Logical QA assumptions for input validation (e.g., creating a user with an empty body should return a `400`). Deviations from these hypotheses are logged as *Validation Findings* rather than confirmed defects.
+- **Test Hypothesis:** Logical QA assumptions for input validation (e.g., creating a user with an empty body should return a `400`). Deviations from these hypotheses are logged as *Validation Findings* rather than confirmed deviations.
 
 ## 7. Risks and Limitations
 - **Public Sandbox Environment:** The ReqRes API is public; its behavior, data state, and authentication mechanisms may change without notice. Currently, endpoints enforce an `x-api-key` header which might cause standard `GET` requests to return `401` if no valid key is present.
