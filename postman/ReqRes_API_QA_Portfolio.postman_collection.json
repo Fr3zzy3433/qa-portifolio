@@ -22,11 +22,9 @@
               }
             ],
             "url": {
-              "raw": "https://reqres.in/api/users/2",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/api/users/2",
               "host": [
-                "reqres",
-                "in"
+                "{{baseUrl}}"
               ],
               "path": [
                 "api",
@@ -35,7 +33,20 @@
               ]
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Response must be valid JSON', function () { pm.response.to.be.json; });",
+                  "pm.test('Response contains data object', function () { pm.expect(pm.response.json()).to.have.property('data'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "CT001.002 - Buscar usuário por ID inexistente",
@@ -49,11 +60,9 @@
               }
             ],
             "url": {
-              "raw": "https://reqres.in/api/users/900",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/api/users/900",
               "host": [
-                "reqres",
-                "in"
+                "{{baseUrl}}"
               ],
               "path": [
                 "api",
@@ -62,7 +71,20 @@
               ]
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () { pm.response.to.have.status(404); });",
+                  "pm.test('Response must be valid JSON', function () { pm.response.to.be.json; });",
+                  "pm.test('Response body is empty object', function () { pm.expect(Object.keys(pm.response.json()).length).to.eql(0); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "CT001.003 - Buscar usuário sem autenticação",
@@ -70,11 +92,9 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "https://reqres.in/api/users/2",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/api/users/2",
               "host": [
-                "reqres",
-                "in"
+                "{{baseUrl}}"
               ],
               "path": [
                 "api",
@@ -83,7 +103,18 @@
               ]
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         }
       ]
     },
@@ -111,11 +142,9 @@
               }
             },
             "url": {
-              "raw": "https://reqres.in/api/users",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/api/users",
               "host": [
-                "reqres",
-                "in"
+                "{{baseUrl}}"
               ],
               "path": [
                 "api",
@@ -123,7 +152,20 @@
               ]
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                  "pm.test('Response contains id', function () { pm.expect(pm.response.json()).to.have.property('id'); });",
+                  "pm.test('Response contains createdAt', function () { pm.expect(pm.response.json()).to.have.property('createdAt'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "CT002.002 - Criar usuário sem autenticação",
@@ -147,11 +189,9 @@
               }
             },
             "url": {
-              "raw": "https://reqres.in/api/users",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/api/users",
               "host": [
-                "reqres",
-                "in"
+                "{{baseUrl}}"
               ],
               "path": [
                 "api",
@@ -159,7 +199,18 @@
               ]
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "CT002.003 - Criar usuário com body vazio",
@@ -182,11 +233,9 @@
               }
             },
             "url": {
-              "raw": "https://reqres.in/api/users",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/api/users",
               "host": [
-                "reqres",
-                "in"
+                "{{baseUrl}}"
               ],
               "path": [
                 "api",
@@ -194,7 +243,18 @@
               ]
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         }
       ]
     },
@@ -222,11 +282,9 @@
               }
             },
             "url": {
-              "raw": "https://reqres.in/api/users/2",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/api/users/2",
               "host": [
-                "reqres",
-                "in"
+                "{{baseUrl}}"
               ],
               "path": [
                 "api",
@@ -235,7 +293,19 @@
               ]
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                  "pm.test('Response contains updatedAt', function () { pm.expect(pm.response.json()).to.have.property('updatedAt'); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "CT003.002 - Atualizando um Usuario na base não estando autenticado",
@@ -254,11 +324,9 @@
               "raw": "{\r\n    \"name\": \"Teste de PUT\",\r\n    \"job\": \"QA Junior\"\r\n}"
             },
             "url": {
-              "raw": "https://reqres.in/api/users/2",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/api/users/2",
               "host": [
-                "reqres",
-                "in"
+                "{{baseUrl}}"
               ],
               "path": [
                 "api",
@@ -267,7 +335,18 @@
               ]
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 401', function () { pm.response.to.have.status(401); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "CT003.003 - Atualizando um Usuario na base com ID inexistente",
@@ -285,11 +364,9 @@
               "raw": "{\r\n    \"name\": \"Teste de PUT\",\r\n    \"job\": \"QA Junior\"\r\n}"
             },
             "url": {
-              "raw": "https://reqres.in/api/users/999",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/api/users/999",
               "host": [
-                "reqres",
-                "in"
+                "{{baseUrl}}"
               ],
               "path": [
                 "api",
@@ -298,7 +375,18 @@
               ]
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404', function () { pm.response.to.have.status(404); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         },
         {
           "name": "CT003.004 - Atualizando um Usuario na base passando body vazio",
@@ -321,11 +409,9 @@
               }
             },
             "url": {
-              "raw": "https://reqres.in/api/users/2",
-              "protocol": "https",
+              "raw": "{{baseUrl}}/api/users/2",
               "host": [
-                "reqres",
-                "in"
+                "{{baseUrl}}"
               ],
               "path": [
                 "api",
@@ -334,9 +420,32 @@
               ]
             }
           },
-          "response": []
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400', function () { pm.response.to.have.status(400); });"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
         }
       ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://reqres.in",
+      "type": "string"
+    },
+    {
+      "key": "api-key",
+      "value": "",
+      "type": "string"
     }
   ]
 }
