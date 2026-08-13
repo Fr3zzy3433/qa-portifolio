@@ -390,7 +390,7 @@
                             "listen": "test",
                             "script": {
                                 "exec": [
-                                    "// Validation Finding: The API allows updating a non-existent ID (999) and returns 200 OK instead of 404 Not Found.",
+                                    "    // Validation Finding: The API allows updating an ID (999) that does not appear in the queryable dataset, returning 200 OK instead of rejecting it.",
                                     "pm.test('Validation Finding (Actual Behavior): Status code is 200', function () { pm.response.to.have.status(200); });",
                                     "pm.test('Response contains updatedAt timestamp', function () { pm.expect(pm.response.json()).to.have.property('updatedAt'); });"
                                 ],
