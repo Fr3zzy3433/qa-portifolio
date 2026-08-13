@@ -1,73 +1,76 @@
 # ReqRes API QA Portfolio
 
-Portfólio de testes de API focado na validação de endpoints do ReqRes. O projeto demonstra boas práticas em testes, estruturação e documentação de defeitos de API.
+Portfolio project focused on API test design, positive and negative scenarios, automated Postman assertions, authentication validation, and structured documentation using the ReqRes public API.
 
-## Objective
+## Project Goal
+This repository serves as a professional technical showcase of API testing skills. It demonstrates how to structure test cases, design contract-based assertions using Postman and Newman, identify boundary conditions, log exploratory findings without breaking automated CI pipelines, and document everything using a clear, scalable structure.
 
-O objetivo principal deste portfólio é demonstrar experiência técnica e prática com testes de API utilizando Postman, criação de casos de teste, validação estrutural (JSON) e identificação de comportamentos divergentes do padrão REST.
+## Test Scope
+The scope includes functional validation of the **Users** resource of the ReqRes API.
+It covers:
+- `GET`, `POST`, and `PUT` methods.
+- Positive testing (Happy path).
+- Negative testing (Invalid IDs, Missing authentication).
+- Input validation (Empty payloads).
+- Edge cases (Updating non-existent resources).
 
-## Stack
+## Current Coverage
 
-- Postman
-- REST API
-- JSON
-- HTTP
-- Git/GitHub
+| ID | Method | Endpoint | Scenario | Type | Oracle |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **CT001.001** | GET | `/api/users/{id}` | Retrieve existing user by ID | Positive | API Documentation |
+| **CT001.002** | GET | `/api/users/{id}` | Retrieve non-existent user by ID | Negative | HTTP Semantics |
+| **CT001.003** | GET | `/api/users/{id}` | Retrieve user without authentication | Negative | API Security |
+| **CT002.001** | POST | `/api/users` | Create user with valid data | Positive | API Documentation |
+| **CT002.002** | POST | `/api/users` | Create user without authentication | Negative | API Security |
+| **CT002.003** | POST | `/api/users` | Create user with empty body payload | Negative/Edge | Test Hypothesis |
+| **CT003.001** | PUT | `/api/users/{id}` | Update existing user with valid data | Positive | API Documentation |
+| **CT003.002** | PUT | `/api/users/{id}` | Update existing user without authentication | Negative | API Security |
+| **CT003.003** | PUT | `/api/users/{id}` | Update user with non-existent ID | Negative/Edge | HTTP Semantics |
+| **CT003.004** | PUT | `/api/users/{id}` | Update existing user with empty body payload | Negative/Edge | Test Hypothesis |
 
-## Test Coverage
+## Project Architecture
 
-| ID | Method | Scenario | Type |
-|----|--------|----------|------|
-| CT001.001 | GET | Buscando Usuario por ID cadastrado na base | Positive |
-| CT001.002 | GET | Buscando Usuario por ID Não existente na base | Negative |
-| CT001.003 | GET | Buscando Usuario por ID sem autenticação | Negative |
-| CT002.001 | POST | Criando um Usuario novo na base com todos os dados corretos | Positive |
-| CT002.002 | POST | Criando um Usuario novo na base sem a x-api-key | Negative |
-| CT002.003 | POST | Criando um Usuario novo na base passando o body vazio | Negative |
-| CT003.001 | PUT | Atualizando um Usuario na base estando autenticado | Positive |
-| CT003.002 | PUT | Atualizando um Usuario na base não estando autenticado | Negative |
-| CT003.003 | PUT | Atualizando um Usuario na base com ID inexistente | Negative |
-| CT003.004 | PUT | Atualizando um Usuario na base passando body vazio | Negative |
-
-## Repository Structure
-
-- `README.md`: Este documento com a visão geral do projeto.
-- `postman/ReqRes_API_QA_Portfolio.postman_collection.json`: Collection contendo as requisições automatizadas do Postman.
-- `test-cases/test-cases.md` & `test-cases.xlsx`: Descrição detalhada dos casos de teste.
-- `docs/test-findings.md`: Documentação de observações, comportamentos inesperados e falhas estruturais.
+```
+/
+├── README.md                                        # This file
+├── .gitignore                                       # Ignored files
+├── postman/
+│   ├── ReqRes_API_QA_Portfolio.postman_collection.json # Automated test cases
+│   └── ReqRes_API_QA_Portfolio.environment.example.json # Template for env variables
+├── test-cases/
+│   └── test-cases.md                                # Detailed test scenarios
+├── docs/
+│   ├── test-strategy.md                             # Scope, approaches, and limitations
+│   ├── test-findings.md                             # Detailed behavior divergence logs
+│   └── traceability-matrix.md                       # Mapping tests to requirements
+└── .github/
+    └── workflows/
+        └── api-tests.yml                            # GitHub Actions CI pipeline
+```
 
 ## Running the Tests
 
-1. Instale o Newman (CLI para Postman) via NPM:
-   `npm install -g newman`
-2. Execute os testes informando as variáveis:
-   `newman run postman/ReqRes_API_QA_Portfolio.postman_collection.json --env-var "baseUrl=https://reqres.in" --env-var "api-key=YOUR_API_KEY"`
+To run the automated tests locally, you need [Node.js](https://nodejs.org/) and [Newman](https://learning.postman.com/docs/collections/using-newman/installing-and-running-newman/) installed.
+
+1. Install Newman globally:
+   ```bash
+   npm install -g newman
+   ```
+2. Run the tests using the collection file. Replace `YOUR_API_KEY` with a valid key generated from the ReqRes dashboard (as the API now requires it):
+   ```bash
+   newman run postman/ReqRes_API_QA_Portfolio.postman_collection.json \
+     --env-var "baseUrl=https://reqres.in" \
+     --env-var "api-key=YOUR_API_KEY"
+   ```
 
 ## Environment Variables
 
-- `{{baseUrl}}`: URL base da API (https://reqres.in).
-- `{{api-key}}`: Chave de autenticação necessária para as requisições. Por motivos de segurança, esta variável fica vazia no repositório.
+The Postman collection is fully parameterized. Do not commit real secrets or API keys.
+- `{{baseUrl}}`: The base URL of the API (e.g., `https://reqres.in`).
+- `{{api-key}}`: The authorization key required to interact with the endpoints. This must be injected via CLI or a local environment file.
 
-## Automated Assertions
+## Test Findings and CI/CD
 
-A collection contém scripts `pm.test` que realizam as seguintes validações:
-- Status Code (ex: 200, 201, 401, 400, 404).
-- Presença de campos obrigatórios no response body (ex: `id`, `createdAt`, `updatedAt`).
-- Estrutura JSON válida.
-
-## Test Findings
-
-Comportamentos que não seguem o padrão REST foram identificados (ex: aceitação de requests com body vazio). Eles estão documentados no arquivo `docs/test-findings.md`.
-
-## Skills Demonstrated
-
-- API Testing
-- Test Case Design
-- Positive Testing
-- Negative Testing
-- Authentication Testing
-- REST
-- JSON
-- HTTP
-- Postman
-- Git/GitHub
+Exploratory findings (e.g., the API returning `201 Created` for an empty payload instead of `400 Bad Request`) are actively documented in `docs/test-findings.md`.
+To maintain a reliable Continuous Integration (CI) pipeline, the automated Postman assertions test the *actual observed behavior* for these known findings, ensuring the build remains green while the architectural issues are tracked transparently in the documentation.
