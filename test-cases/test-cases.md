@@ -1,138 +1,242 @@
 # ReqRes API Test Cases
 
-This document outlines the test cases for the ReqRes API. It includes positive and negative scenarios for GET, POST, and PUT operations.
+This document defines the functional test cases for the ReqRes API. These scenarios cover positive, negative, validation, and authentication testing.
 
-## Scenario: 001- Busca/Search
+## Module: Users - Search (GET)
 
-### CT001.001 - Buscando Usuario por ID cadastrado na base
+### CT001.001 - Retrieve existing user by ID
 
-**Description / Steps:**
-> Dado que o ID 2 exista na base
-> Quando eu fizer o get em https://reqres.in/api/users/2
-> Então o sistema deve retornar status 200 OK
-> E o corpo da resposta deve ser um objeto válido
-
-**Status:** Pass
-
----
-
-### CT001.002 - Buscando Usuario por ID  Não existente na base
-
-**Description / Steps:**
-> Dado que o ID 23 não exista na base
-> Quando eu fizer o get em https://reqres.in/api/users/23
-> Então o sistema deve retornar status 404 Not Found
-> E o corpo da resposta deve ser um objeto vazio {}
-
-**Status:** Pass
+**Objective:** Validate that a registered user can be successfully retrieved by their ID.
+**Method:** GET
+**Endpoint:** `/api/users/2`
+**Preconditions:**
+- A valid `x-api-key` is provided in the headers.
+- User ID `2` exists in the database.
+**Test Data:** User ID = `2`
+**Steps:**
+1. Send a GET request to `{{baseUrl}}/api/users/2` with the `x-api-key` header.
+**Expected Result:**
+- Status code is `200 OK`.
+- Response body is a valid JSON object containing a `data` object with the user's details.
+**Oracle:** API Documentation / Standard HTTP Semantics.
+**Type:** Positive Testing.
+**Automation Status:** Automated.
 
 ---
 
-### CT001.003 - Buscando Usuario por ID sem autenticação
+### CT001.002 - Retrieve non-existent user by ID
 
-**Description / Steps:**
-> Dado que eu não informe o x-api-key
-> Quando eu fizer get em https://reqres.in/api/users/2
-> Então o sistema deve retornar status 401 Unauthorized
-> E a resposta deve indicar falta de autenticação
-
-**Status:** Pass
-
----
-
-## Scenario: 002 -  Criação/Create
-
-### CT002.001 - Criando um Usuario novo na base com todos os dados corretos
-
-**Description / Steps:**
-> Dado que eu informe a x-api-key
-> E os dados name como string e job como string
-> Quando eu fizer POST em https://reqres.in/api/users
-> Então o sistema deve retornar status 201 Created
-> E a resposta deve conter name e job com os valores enviados
-> E a resposta deve conter id como inteiro gerado pela API
-> E a resposta deve conter createdAt como timestamp da criação
-
-**Status:** Pass
+**Objective:** Validate the API's behavior when attempting to retrieve a user ID that does not exist.
+**Method:** GET
+**Endpoint:** `/api/users/23`
+**Preconditions:**
+- A valid `x-api-key` is provided in the headers.
+- User ID `23` does not exist in the database.
+**Test Data:** User ID = `23`
+**Steps:**
+1. Send a GET request to `{{baseUrl}}/api/users/23` with the `x-api-key` header.
+**Expected Result:**
+- Status code is `404 Not Found`.
+- Response body is an empty JSON object `{}`.
+**Oracle:** HTTP Semantics.
+**Type:** Negative Testing.
+**Automation Status:** Automated.
 
 ---
 
-### CT002.002 - Criando um Usuario novo na base sem a x-api-key
+### CT001.003 - Retrieve user without authentication
 
-**Description / Steps:**
-> Dado que eu não informe a x-api-key
-> Quando eu fizer o post em https://reqres.in/api/users
-> Então o sistema deve retornar status 401 Unauthorized
-> E a resposta deve ser clara sobre a falta da x-api-key
-
-**Status:** Pass
-
----
-
-### CT002.003 - Criando um Usuario novo na base passando o body vazio
-
-**Description / Steps:**
-> Dado que eu mande um body vazio
-> Quando eu fizer o post em https://reqres.in/api/users
-> Então o sistema deve retornar 400 Bad Request
->
-
-**Status:** Validation Finding (Observation)
-
-**Observed Behavior:** API retornou 201 Created com timestamp  mesmo sem nenhum dado no body, aceitando criação de  usuário sem campos obrigatórios
+**Objective:** Validate that the endpoint correctly enforces access control when the authentication key is missing.
+**Method:** GET
+**Endpoint:** `/api/users/2`
+**Preconditions:**
+- The `x-api-key` header is missing or disabled.
+**Test Data:** User ID = `2`
+**Steps:**
+1. Send a GET request to `{{baseUrl}}/api/users/2` without the `x-api-key` header.
+**Expected Result:**
+- Status code is `401 Unauthorized`.
+- Response body clearly indicates the missing authentication.
+**Oracle:** API Security Requirements / HTTP Semantics.
+**Type:** Security / Negative Testing.
+**Automation Status:** Automated.
 
 ---
 
-## Scenario: 003 - Atualizar/Update
+## Module: Users - Creation (POST)
 
-### CT003.001 - Atualizando um Usuario na base estando autenticado
+### CT002.001 - Create user with valid data
 
-**Description / Steps:**
-> Dado que eu passe a x-api-key e o usuario exista
-> Quando eu fizer o PUT em https://reqres.in/api/users/2
-> Então o sistema deve retornar status 200 OK
-> E a resposta deve retornar o objeto ja atualizado
-
-**Status:** Pass
-
----
-
-### CT003.002 - Atualizando um Usuario na base não estando autenticado
-
-**Description / Steps:**
-> Dado que eu não passe a x-api-key e o usuario exista
-> Quando eu fizer o PUT em https://reqres.in/api/users/2
-> Então o sistema deve retornar status 401 Unauthorized
-> E a resposta deve retornar o erro claro de falta da chave de API
-
-**Status:** Pass
-
----
-
-### CT003.003 - Atualizando um Usuario na base com ID inexistente
-
-**Description / Steps:**
-> Dado que eu passe a x-api-key e o usuario não exista
-> Quando eu fizer o PUT em https://reqres.in/api/users/999
-> Então o sistema deve retornar status 404 Not Found
-> E a resposta deve retornar o body vazio
-
-**Status:** Validation Finding (Observation)
-
-**Observed Behavior:** API retornou 200OK com timestamp  mesmo sem nenhum dado no body, aceitando atualização de  usuário sem o mesmo existir na base
+**Objective:** Validate that a new user is successfully created when valid data is provided.
+**Method:** POST
+**Endpoint:** `/api/users`
+**Preconditions:**
+- A valid `x-api-key` is provided in the headers.
+**Test Data:**
+```json
+{
+    "name": "QA Tester",
+    "job": "QA Engineer"
+}
+```
+**Steps:**
+1. Send a POST request to `{{baseUrl}}/api/users` with the `x-api-key` header and the JSON body.
+**Expected Result:**
+- Status code is `201 Created`.
+- Response contains the `name` and `job` provided.
+- Response contains an `id` generated by the API.
+- Response contains `createdAt` indicating the timestamp.
+**Oracle:** API Documentation / Standard HTTP Semantics.
+**Type:** Positive Testing.
+**Automation Status:** Automated.
 
 ---
 
-### CT003.004 - Atualizando um Usuario na base passando body vazio
+### CT002.002 - Create user without authentication
 
-**Description / Steps:**
-> Dado que eu passe a x-api-key e o usuario exista
-> Quando eu fizer o PUT em https://reqres.in/api/users/2
-> Então o sistema deve retornar status 400 Bad Request
-> E a resposta deve retornar o body vazio
-
-**Status:** Validation Finding (Observation)
-
-**Observed Behavior:** API retornou 200 OK com timestamp  mesmo sem nenhum dado no body, aceitando atualização de  usuário com body vazio
+**Objective:** Validate that user creation is blocked if the authentication key is missing.
+**Method:** POST
+**Endpoint:** `/api/users`
+**Preconditions:**
+- The `x-api-key` header is missing or disabled.
+**Test Data:**
+```json
+{
+    "name": "QA Tester",
+    "job": "QA Engineer"
+}
+```
+**Steps:**
+1. Send a POST request to `{{baseUrl}}/api/users` without the `x-api-key` header.
+**Expected Result:**
+- Status code is `401 Unauthorized`.
+- Response body clearly indicates the missing authentication.
+**Oracle:** API Security Requirements / HTTP Semantics.
+**Type:** Security / Negative Testing.
+**Automation Status:** Automated.
 
 ---
+
+### CT002.003 - Create user with empty body payload
+
+**Objective:** Validate how the API handles an attempt to create a resource without providing any data fields.
+**Method:** POST
+**Endpoint:** `/api/users`
+**Preconditions:**
+- A valid `x-api-key` is provided in the headers.
+**Test Data:**
+```json
+{}
+```
+**Steps:**
+1. Send a POST request to `{{baseUrl}}/api/users` with an empty JSON body.
+**Expected Result (Hypothesis):**
+- Status code is `400 Bad Request` or `422 Unprocessable Entity` due to missing required fields.
+**Actual Result:**
+- The API returns `201 Created` generating an `id` and `createdAt` even though no data was sent.
+**Oracle:** Test Hypothesis / Input Validation Best Practices.
+**Type:** Edge Case / Negative Testing.
+**Automation Status:** Automated (Finding).
+
+---
+
+## Module: Users - Update (PUT)
+
+### CT003.001 - Update existing user with valid data
+
+**Objective:** Validate that an existing user's data can be successfully updated.
+**Method:** PUT
+**Endpoint:** `/api/users/2`
+**Preconditions:**
+- A valid `x-api-key` is provided in the headers.
+- User ID `2` exists.
+**Test Data:**
+```json
+{
+    "name": "Teste de PUT",
+    "job": "QA Junior"
+}
+```
+**Steps:**
+1. Send a PUT request to `{{baseUrl}}/api/users/2` with the `x-api-key` header and the JSON body.
+**Expected Result:**
+- Status code is `200 OK`.
+- Response contains the updated data and an `updatedAt` timestamp.
+**Oracle:** API Documentation / Standard HTTP Semantics.
+**Type:** Positive Testing.
+**Automation Status:** Automated.
+
+---
+
+### CT003.002 - Update existing user without authentication
+
+**Objective:** Validate that update requests are blocked if the authentication key is missing.
+**Method:** PUT
+**Endpoint:** `/api/users/2`
+**Preconditions:**
+- The `x-api-key` header is missing or disabled.
+**Test Data:**
+```json
+{
+    "name": "Teste de PUT",
+    "job": "QA Junior"
+}
+```
+**Steps:**
+1. Send a PUT request to `{{baseUrl}}/api/users/2` without the `x-api-key` header.
+**Expected Result:**
+- Status code is `401 Unauthorized`.
+**Oracle:** API Security Requirements / HTTP Semantics.
+**Type:** Security / Negative Testing.
+**Automation Status:** Automated.
+
+---
+
+### CT003.003 - Update user with non-existent ID
+
+**Objective:** Validate the API's behavior when attempting to update a resource that does not exist in the database.
+**Method:** PUT
+**Endpoint:** `/api/users/999`
+**Preconditions:**
+- A valid `x-api-key` is provided in the headers.
+- User ID `999` does not exist.
+**Test Data:**
+```json
+{
+    "name": "Teste de PUT",
+    "job": "QA Junior"
+}
+```
+**Steps:**
+1. Send a PUT request to `{{baseUrl}}/api/users/999` with the JSON body.
+**Expected Result (Hypothesis):**
+- Status code is `404 Not Found` indicating the resource to update was not found.
+**Actual Result:**
+- The API returns `200 OK` and an `updatedAt` timestamp, successfully processing an update for a non-existent entity.
+**Oracle:** HTTP Semantics (RFC 7231).
+**Type:** Edge Case / Negative Testing.
+**Automation Status:** Automated (Finding).
+
+---
+
+### CT003.004 - Update existing user with empty body payload
+
+**Objective:** Validate how the API handles a PUT request to update a resource without providing any new data.
+**Method:** PUT
+**Endpoint:** `/api/users/2`
+**Preconditions:**
+- A valid `x-api-key` is provided in the headers.
+- User ID `2` exists.
+**Test Data:**
+```json
+{}
+```
+**Steps:**
+1. Send a PUT request to `{{baseUrl}}/api/users/2` with an empty JSON body.
+**Expected Result (Hypothesis):**
+- Status code is `400 Bad Request` as data is expected for an update operation.
+**Actual Result:**
+- The API returns `200 OK` generating an `updatedAt` timestamp for an empty body.
+**Oracle:** Test Hypothesis / Input Validation Best Practices.
+**Type:** Edge Case / Negative Testing.
+**Automation Status:** Automated (Finding).

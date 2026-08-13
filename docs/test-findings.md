@@ -1,18 +1,42 @@
 # ReqRes API Test Findings
 
-Este documento relata formalmente as inconsistências observadas entre os comportamentos previstos por convenções REST padrão e as respostas reais da API ReqRes. Tais comportamentos são registrados como **Validation Finding** ou **Observed Behavior**, uma vez que a ReqRes atua como ambiente de teste e não possui documentação rígida proibindo tais práticas, mas num cenário corporativo real indicariam falhas estruturais.
+This document formally reports observations and inconsistencies between standard REST conventions (or test hypotheses) and the actual behavior of the ReqRes API.
 
-## 1. POST `/api/users` - Criação com Body Vazio (CT002.003)
-- **Test Finding:** A API aceita a criação de um usuário sem que nenhum campo obrigatório seja enviado.
-- **Expected Result:** Status code `400 Bad Request` ou `422 Unprocessable Entity` informando a ausência de dados obrigatórios (`name`, `job`).
-- **Actual Result:** A API retorna status `201 Created` gerando `id` e `createdAt` para um body vazio `{}`.
+Because ReqRes acts as a public sandbox/mock API without strict business requirements, these behaviors are classified as **Validation Findings** or **Observed Behavior** rather than confirmed defects. In a real corporate environment, these would be raised for clarification with the product or development team.
 
-## 2. PUT `/api/users/{id}` - Atualização de ID Inexistente (CT003.003)
-- **Test Finding:** A API permite atualizar recursos que não existem no banco de dados.
-- **Expected Result:** Status code `404 Not Found` informando que o recurso solicitado não pôde ser encontrado para atualização.
-- **Actual Result:** A API retorna `200 OK` com o campo `updatedAt`, aceitando com sucesso o comando sobre uma entidade inexistente (ex: ID 999).
+## FIND-001 — POST accepts empty payload
 
-## 3. PUT `/api/users/{id}` - Atualização com Body Vazio (CT003.004)
-- **Test Finding:** A API processa e aceita atualizações em recursos sem que nenhuma informação nova seja transmitida.
-- **Expected Result:** Status code `400 Bad Request` informando que dados devem ser passados para a modificação.
-- **Actual Result:** A API retorna status `200 OK` gerando `updatedAt` para um body vazio `{}`.
+**Classification:** Validation Finding
+**Test Case:** CT002.003
+**Oracle:** Test Hypothesis / Input Validation Best Practices
+**Expected:** Status code `400 Bad Request` or `422 Unprocessable Entity` indicating the absence of required data fields (e.g., `name`, `job`).
+**Observed:** The API returns status `201 Created`, generating an `id` and `createdAt` timestamp for a completely empty body `{}`.
+**Evidence:** Executing `POST /api/users` with `{}` payload returns a successful creation response.
+**Impact:** Not assessed due to the absence of a strict business requirement.
+**Conclusion:** The behavior differs from the expected validation hypothesis, but it cannot be classified as a confirmed defect without an explicit API contract dictating mandatory fields.
+
+---
+
+## FIND-002 — PUT updates non-existent resource ID
+
+**Classification:** Validation Finding
+**Test Case:** CT003.003
+**Oracle:** HTTP Semantics (RFC 7231)
+**Expected:** Status code `404 Not Found` informing that the requested resource could not be found for an update operation.
+**Observed:** The API returns `200 OK` with an `updatedAt` field, successfully accepting an update command for an entity that does not exist (e.g., ID `999`).
+**Evidence:** Executing `PUT /api/users/999` with valid payload returns `200 OK`.
+**Impact:** Not assessed due to the absence of a strict business requirement.
+**Conclusion:** The behavior deviates from standard HTTP semantics for `PUT` on non-existent resources (which typically return `404` or `201` if creation is allowed). Since it behaves as a mock, this is noted as a finding.
+
+---
+
+## FIND-003 — PUT accepts empty payload
+
+**Classification:** Validation Finding
+**Test Case:** CT003.004
+**Oracle:** Test Hypothesis / Input Validation Best Practices
+**Expected:** Status code `400 Bad Request` or `422 Unprocessable Entity` indicating that data must be provided to perform an update.
+**Observed:** The API returns status `200 OK`, generating an `updatedAt` timestamp despite the payload being empty `{}`.
+**Evidence:** Executing `PUT /api/users/2` with `{}` payload returns `200 OK`.
+**Impact:** Not assessed due to the absence of a strict business requirement.
+**Conclusion:** The behavior differs from the expected validation hypothesis, but it cannot be classified as a confirmed defect without an explicit API contract dictating mandatory update fields.
