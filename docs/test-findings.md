@@ -1,42 +1,56 @@
 # ReqRes API Test Findings
 
-This document formally reports observations and inconsistencies between standard REST conventions (or test hypotheses) and the actual behavior of the ReqRes API.
+This document records observations and differences between explicit API expectations, test hypotheses, and the actual behavior observed during execution.
 
-Because ReqRes acts as a public sandbox/mock API without strict business requirements, these behaviors are classified as **Validation Findings** or **Observed Behavior** rather than confirmed defects. In a real corporate environment, these would be raised for clarification with the product or development team.
+Because ReqRes is an external testing API and this portfolio does not own its business requirements, hypothesis-based behaviors are classified as **Validation Findings** rather than confirmed defects. When an observed response contradicts ReqRes's published documentation, the finding is identified separately as a **Published Contract Divergence**.
 
 ## FIND-001 — POST accepts empty payload
 
-**Classification:** Validation Finding
-**Test Case:** CT002.003
-**Oracle:** Test Hypothesis / Input Validation Best Practices
-**Expected:** Status code `400 Bad Request` or `422 Unprocessable Entity` indicating the absence of required data fields (e.g., `name`, `job`).
-**Observed:** The API returns status `201 Created`, generating an `id` and `createdAt` timestamp for a completely empty body `{}`.
-**Evidence:** Executing `POST /api/users` with `{}` payload returns a successful creation response.
-**Impact:** Not assessed due to the absence of a strict business requirement.
-**Conclusion:** The behavior differs from the expected validation hypothesis, but it cannot be classified as a confirmed defect without an explicit API contract dictating mandatory fields.
+**Classification:** Validation Finding  
+**Test Case:** CT002.003  
+**Oracle:** Test Hypothesis / Input Validation Best Practices  
+**Expected (Hypothesis):** Status code `400 Bad Request` or `422 Unprocessable Entity` if `name` and `job` are mandatory fields.  
+**Observed:** The API returns `201 Created`, generating an `id` and `createdAt` timestamp for an empty body `{}`.  
+**Evidence:** Executing `POST /api/users` with `{}` and a valid API key returns a successful creation response.  
+**Impact:** Not assessed because this portfolio has no authoritative business requirement declaring those fields mandatory.  
+**Conclusion:** The behavior differs from the validation hypothesis, but it is not a confirmed defect without an explicit contract requiring those fields.
 
 ---
 
-## FIND-002 — PUT updates non-existent resource ID
+## FIND-002 — PUT accepts update for a non-existent resource ID
 
-**Classification:** Validation Finding
-**Test Case:** CT003.003
-**Oracle:** Test Hypothesis / API Domain Expectation
-**Expected:** Status code `404 Not Found` informing that the requested resource could not be found for an update operation.
-**Observed:** The API returns `200 OK` with an `updatedAt` field, successfully accepting an update command for an entity that does not exist (e.g., ID `999`).
-**Evidence:** Executing `PUT /api/users/999` with valid payload returns `200 OK`.
-**Impact:** Not assessed due to the absence of a strict business requirement.
-**Conclusion:** The behavior deviates from standard HTTP semantics for `PUT` on non-existent resources (which typically return `404` or `201` if creation is allowed). Since it behaves as a mock, this is noted as a finding.
+**Classification:** Validation Finding  
+**Test Case:** CT003.003  
+**Oracle:** Test Hypothesis / API Domain Expectation  
+**Expected (Hypothesis):** `404 Not Found` if the API contract requires the target resource to exist before an update.  
+**Observed:** The API returns `200 OK` with an `updatedAt` field for a request to an ID treated by this test as non-existent (for example, ID `999`).  
+**Evidence:** Executing `PUT /api/users/999` with a valid payload and API key returns `200 OK`.  
+**Impact:** Not assessed because the repository has no authoritative ReqRes business requirement defining whether this operation must reject, update, or upsert a non-existent resource.  
+**Conclusion:** This is a domain-level test hypothesis, not a universal HTTP rule. The response is documented as observed behavior pending an explicit contract.
 
 ---
 
 ## FIND-003 — PUT accepts empty payload
 
-**Classification:** Validation Finding
-**Test Case:** CT003.004
-**Oracle:** Test Hypothesis / Input Validation Best Practices
-**Expected:** Status code `400 Bad Request` or `422 Unprocessable Entity` indicating that data must be provided to perform an update.
-**Observed:** The API returns status `200 OK`, generating an `updatedAt` timestamp despite the payload being empty `{}`.
-**Evidence:** Executing `PUT /api/users/2` with `{}` payload returns `200 OK`.
-**Impact:** Not assessed due to the absence of a strict business requirement.
-**Conclusion:** The behavior differs from the expected validation hypothesis, but it cannot be classified as a confirmed defect without an explicit API contract dictating mandatory update fields.
+**Classification:** Validation Finding  
+**Test Case:** CT003.004  
+**Oracle:** Test Hypothesis / Input Validation Best Practices  
+**Expected (Hypothesis):** `400 Bad Request` or `422 Unprocessable Entity` if the API contract requires update fields in the request body.  
+**Observed:** The API returns `200 OK`, generating an `updatedAt` timestamp for an empty body `{}`.  
+**Evidence:** Executing `PUT /api/users/2` with `{}` and a valid API key returns `200 OK`.  
+**Impact:** Not assessed because this portfolio has no authoritative business requirement declaring update fields mandatory.  
+**Conclusion:** The behavior differs from the validation hypothesis, but it is not a confirmed defect without an explicit contract requiring data fields for the operation.
+
+---
+
+## FIND-004 — GET user succeeds without `x-api-key`
+
+**Classification:** Published Contract Divergence  
+**Test Case:** CT001.003  
+**Oracle:** ReqRes Published Authentication Contract  
+**Published Expectation:** ReqRes documentation states that requests to `reqres.in` require an `x-api-key` header and specifically documents `/api/users` requests with that header.  
+**Observed:** `GET /api/users/2` without `x-api-key` returns `200 OK` and the user payload, while the authenticated negative POST and PUT scenarios in the same suite return `401 Unauthorized` when the key is omitted.  
+**Evidence:** CI execution on 2026-08-14 returned `200 OK` for CT001.003 without the header.  
+**Reference:** https://reqres.in/docs  
+**Impact:** Authentication enforcement is inconsistent across the exercised classic `/api/users` methods.  
+**Conclusion:** Unlike FIND-001 through FIND-003, this is not merely a QA hypothesis: it is a reproducible difference between published authentication guidance and observed behavior. The automated case asserts the current observed `200` behavior so the portfolio pipeline remains deterministic; if ReqRes changes the endpoint to enforce the published contract, the test will fail and the finding must be reviewed/closed.

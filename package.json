@@ -7,8 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "test:api": "newman run postman/ReqRes_API_QA_Portfolio.postman_collection.json --env-var \"baseUrl=https://reqres.in\" --env-var \"api-key=${REQRES_API_KEY:-}\""
+    "test": "npm run test:api",
+    "test:api": "node scripts/run-api-tests.js"
   },
   "repository": {
     "type": "git",
