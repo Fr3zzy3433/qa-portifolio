@@ -23,7 +23,7 @@ The scope covers the **Users** resource of the ReqRes API:
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **CT001.001** | GET | `/api/users/{id}` | Retrieve existing user by ID | Positive | API Documentation / Published Contract |
 | **CT001.002** | GET | `/api/users/{id}` | Retrieve non-existent user by ID | Negative | API Documentation / Observed Contract |
-| **CT001.003** | GET | `/api/users/{id}` | Retrieve user without authentication | Negative | API Security / Published Contract |
+| **CT001.003** | GET | `/api/users/{id}` | Retrieve existing user without `x-api-key` | Known Finding | Published Authentication Contract vs. Observed Behavior |
 | **CT002.001** | POST | `/api/users` | Create user with valid data | Positive | API Documentation / Published Contract |
 | **CT002.002** | POST | `/api/users` | Create user without authentication | Negative | API Security / Published Contract |
 | **CT002.003** | POST | `/api/users` | Create user with empty body payload | Negative / Edge | Test Hypothesis / Input Validation Expectation |
@@ -115,12 +115,7 @@ A missing or placeholder API key causes the run to fail. Authentication/configur
 
 The workflow in `.github/workflows/api-tests.yml` runs on pull requests, pushes to `main`, and can also be started manually with **Run workflow**.
 
-Before authenticated executions can pass, configure the repository secret:
-
-1. Open **Settings** in the GitHub repository.
-2. Go to **Secrets and variables > Actions**.
-3. Create a repository secret named exactly `REQRES_API_KEY`.
-4. Store a valid ReqRes API key as its value.
+Configure the repository secret under **Settings > Secrets and variables > Actions** with the exact name `REQRES_API_KEY`.
 
 The CI pipeline:
 
@@ -135,23 +130,26 @@ A missing secret is treated as a configuration failure, not as a reason to skip 
 
 ## Findings vs. Confirmed Defects
 
-ReqRes is an external testing API and this portfolio does not own its business requirements. For that reason, unexpected responses are not automatically labeled as bugs.
+ReqRes is an external testing API and this portfolio does not own its business requirements. For that reason, test hypotheses are not automatically labeled as bugs.
 
 The documentation distinguishes among:
 
 - published/documented API expectations;
-- security expectations;
 - observed contract behavior;
+- security expectations;
 - test hypotheses;
-- validation findings.
+- validation findings;
+- published-contract divergences.
 
-Examples such as accepting an empty payload or allowing a `PUT` against an ID treated as non-existent are documented in `docs/test-findings.md`. Their automated checks record the currently observed behavior while the documentation preserves the original hypothesis and explains the gap. A configuration failure, authentication failure, or unexpected regression still fails the pipeline.
+`FIND-004` is intentionally stronger than the hypothesis-based findings: ReqRes currently documents `x-api-key` as required for requests, yet the automated suite observed `GET /api/users/2` returning `200 OK` without that header while POST and PUT negative-authentication cases returned `401`. The case therefore records the current observed behavior and links it to the published-contract divergence in `docs/test-findings.md`. If ReqRes later enforces the documented contract for that GET endpoint, the assertion will fail and the finding must be reviewed.
+
+Other examples, such as accepting an empty payload or allowing a `PUT` against an ID treated as non-existent, remain hypothesis-based findings rather than confirmed product defects.
 
 ## Documentation
 
 - `test-cases/test-cases.md` — detailed test scenarios and expected/observed results.
 - `docs/test-strategy.md` — scope, approach, risks, and limitations.
-- `docs/test-findings.md` — documented behavioral findings.
+- `docs/test-findings.md` — documented behavioral findings and contract divergences.
 - `docs/traceability-matrix.md` — mapping between test cases, Postman requests, oracles, and findings.
 
 ## Technologies
