@@ -1,0 +1,28 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "Portfolio project focused on API test design, positive and negative scenarios, automated Postman assertions, authentication validation, and structured documentation using the ReqRes public API.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "npm run test:api",
+    "test:api": "node scripts/run-api-tests.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fr3zzy3433/qa-portifolio.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Fr3zzy3433/qa-portifolio/issues"
+  },
+  "homepage": "https://github.com/Fr3zzy3433/qa-portifolio#readme",
+  "devDependencies": {
+    "newman": "^6.2.2"
+  }
+}
