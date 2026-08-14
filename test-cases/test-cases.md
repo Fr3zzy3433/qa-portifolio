@@ -1,6 +1,6 @@
 # ReqRes API Test Cases
 
-This document defines the functional test cases for the ReqRes API portfolio. The scenarios cover positive, negative, authentication, validation-hypothesis, and edge-case testing.
+This document defines the functional test cases for the ReqRes API portfolio. The scenarios cover positive, negative, authentication, validation-hypothesis, edge-case, and published-contract-divergence testing.
 
 ## Module: Users - Search (GET)
 
@@ -57,9 +57,9 @@ This document defines the functional test cases for the ReqRes API portfolio. Th
 
 ---
 
-### CT001.003 - Retrieve user without authentication
+### CT001.003 - Retrieve existing user without x-api-key (Known Finding)
 
-**Objective:** Validate that the endpoint rejects a request when the required API key is omitted.  
+**Objective:** Compare the published ReqRes authentication requirement with the observed behavior when `x-api-key` is omitted from a classic GET request.  
 **Method:** GET  
 **Endpoint:** `/api/users/2`
 
@@ -71,13 +71,19 @@ This document defines the functional test cases for the ReqRes API portfolio. Th
 **Steps:**
 1. Send `GET {{baseUrl}}/api/users/2` without `x-api-key`.
 
-**Expected Result:**
-- Status code is `401 Unauthorized`.
-- Response indicates that the API key is missing or invalid.
+**Published Expectation:**
+- ReqRes documentation states that requests require the `x-api-key` header.
+- A missing key would therefore be expected to result in an authentication error.
 
-**Oracle:** API Security / Published Contract.  
-**Type:** Authentication / Negative Testing.  
-**Automation Status:** Automated.
+**Observed Behavior:**
+- The endpoint returns `200 OK`.
+- The response contains the `data` object for user ID `2`.
+
+**Oracle:** ReqRes Published Authentication Contract vs. Observed Behavior.  
+**Type:** Authentication / Contract Divergence.  
+**Automation Status:** Automated (Known Finding: `FIND-004`).
+
+**Interpretation:** This case deliberately asserts the current observed `200` response so CI remains deterministic while `FIND-004` documents the contradiction with the published authentication guidance. If ReqRes changes this endpoint to enforce the documented contract, this test will fail and the finding must be reviewed.
 
 ---
 
