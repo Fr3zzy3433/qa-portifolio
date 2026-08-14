@@ -21,16 +21,16 @@ The scope covers the **Users** resource of the ReqRes API:
 
 | ID | Method | Endpoint | Scenario | Type | Oracle |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **CT001.001** | GET | `/api/users/{id}` | Retrieve existing user by ID | Positive | API Documentation |
-| **CT001.002** | GET | `/api/users/{id}` | Retrieve non-existent user by ID | Negative | Test Hypothesis / API Domain Expectation |
-| **CT001.003** | GET | `/api/users/{id}` | Retrieve user without authentication | Negative | API Security |
-| **CT002.001** | POST | `/api/users` | Create user with valid data | Positive | API Documentation |
-| **CT002.002** | POST | `/api/users` | Create user without authentication | Negative | API Security |
-| **CT002.003** | POST | `/api/users` | Create user with empty body payload | Negative / Edge | Test Hypothesis |
-| **CT003.001** | PUT | `/api/users/{id}` | Update existing user with valid data | Positive | API Documentation |
-| **CT003.002** | PUT | `/api/users/{id}` | Update existing user without authentication | Negative | API Security |
+| **CT001.001** | GET | `/api/users/{id}` | Retrieve existing user by ID | Positive | API Documentation / Published Contract |
+| **CT001.002** | GET | `/api/users/{id}` | Retrieve non-existent user by ID | Negative | API Documentation / Observed Contract |
+| **CT001.003** | GET | `/api/users/{id}` | Retrieve user without authentication | Negative | API Security / Published Contract |
+| **CT002.001** | POST | `/api/users` | Create user with valid data | Positive | API Documentation / Published Contract |
+| **CT002.002** | POST | `/api/users` | Create user without authentication | Negative | API Security / Published Contract |
+| **CT002.003** | POST | `/api/users` | Create user with empty body payload | Negative / Edge | Test Hypothesis / Input Validation Expectation |
+| **CT003.001** | PUT | `/api/users/{id}` | Update existing user with valid data | Positive | API Documentation / Published Contract |
+| **CT003.002** | PUT | `/api/users/{id}` | Update existing user without authentication | Negative | API Security / Published Contract |
 | **CT003.003** | PUT | `/api/users/{id}` | Update user with non-existent ID | Negative / Edge | Test Hypothesis / API Domain Expectation |
-| **CT003.004** | PUT | `/api/users/{id}` | Update existing user with empty body payload | Negative / Edge | Test Hypothesis |
+| **CT003.004** | PUT | `/api/users/{id}` | Update existing user with empty body payload | Negative / Edge | Test Hypothesis / Input Validation Expectation |
 
 ## Project Structure
 
@@ -113,9 +113,9 @@ A missing or placeholder API key causes the run to fail. Authentication/configur
 
 ## CI with GitHub Actions
 
-The workflow in `.github/workflows/api-tests.yml` runs on pull requests and pushes to `main`.
+The workflow in `.github/workflows/api-tests.yml` runs on pull requests, pushes to `main`, and can also be started manually with **Run workflow**.
 
-Before the workflow can pass, configure the repository secret:
+Before authenticated executions can pass, configure the repository secret:
 
 1. Open **Settings** in the GitHub repository.
 2. Go to **Secrets and variables > Actions**.
@@ -131,18 +131,21 @@ The CI pipeline:
 5. Executes the Newman suite through `npm run test:api`.
 6. Returns a non-zero exit code whenever the test run contains failures.
 
+A missing secret is treated as a configuration failure, not as a reason to skip the suite and report success.
+
 ## Findings vs. Confirmed Defects
 
 ReqRes is an external testing API and this portfolio does not own its business requirements. For that reason, unexpected responses are not automatically labeled as bugs.
 
 The documentation distinguishes among:
 
-- documented API expectations;
+- published/documented API expectations;
 - security expectations;
+- observed contract behavior;
 - test hypotheses;
-- observed behavior / validation findings.
+- validation findings.
 
-Examples such as accepting an empty payload or allowing a `PUT` against a non-existent ID are documented in `docs/test-findings.md`. Their automated checks record the currently observed behavior while the documentation preserves the original hypothesis and explains the gap. A configuration failure, authentication failure, or unexpected regression still fails the pipeline.
+Examples such as accepting an empty payload or allowing a `PUT` against an ID treated as non-existent are documented in `docs/test-findings.md`. Their automated checks record the currently observed behavior while the documentation preserves the original hypothesis and explains the gap. A configuration failure, authentication failure, or unexpected regression still fails the pipeline.
 
 ## Documentation
 
