@@ -5,36 +5,23 @@ on:
     branches:
       - main
   pull_request:
-  workflow_dispatch:
-
-permissions:
-  contents: read
 
 jobs:
   test-api:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
-    env:
-      REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}
-
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
         with:
-          node-version: '24'
-          cache: npm
-
-      - name: Validate API Key Secret
-        run: >-
-          node -e "if (!(process.env.REQRES_API_KEY || '').trim()) {
-          console.error('REQRES_API_KEY is not configured. Add it under Settings > Secrets and variables > Actions.');
-          process.exit(1); }"
+          node-version: '22'
 
       - name: Install Dependencies
         run: npm ci
 
       - name: Run Newman Tests
         run: npm run test:api
+        env:
+          REQRES_API_KEY: ${{ secrets.REQRES_API_KEY }}

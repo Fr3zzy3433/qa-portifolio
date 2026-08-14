@@ -1,89 +1,65 @@
 # ReqRes API Test Cases
 
-This document defines the functional test cases for the ReqRes API portfolio. The scenarios cover positive, negative, authentication, validation-hypothesis, edge-case, and published-contract-divergence testing.
+This document defines the functional test cases for the ReqRes API. These scenarios cover positive, negative, validation, and authentication testing.
 
 ## Module: Users - Search (GET)
 
 ### CT001.001 - Retrieve existing user by ID
 
-**Objective:** Validate that a user exposed by the test dataset can be retrieved by ID.  
-**Method:** GET  
+**Objective:** Validate that a registered user can be successfully retrieved by their ID.
+**Method:** GET
 **Endpoint:** `/api/users/2`
-
 **Preconditions:**
-- A valid `x-api-key` is provided.
-- ID `2` is available in the externally observable dataset used by this portfolio.
-
+- A valid `x-api-key` is provided in the headers.
+- User ID `2` exists in the database.
 **Test Data:** User ID = `2`
-
 **Steps:**
-1. Send `GET {{baseUrl}}/api/users/2` with a valid `x-api-key` header.
-
+1. Send a GET request to `{{baseUrl}}/api/users/2` with the `x-api-key` header.
 **Expected Result:**
 - Status code is `200 OK`.
-- Response is valid JSON.
-- Response contains a `data` object.
-- `data.id` equals `2`.
-
-**Oracle:** API Documentation / Published Contract.  
-**Type:** Positive Testing.  
+- Response body is a valid JSON object containing a `data` object with the user's details.
+**Oracle:** API Documentation / Standard HTTP Semantics.
+**Type:** Positive Testing.
 **Automation Status:** Automated.
 
 ---
 
 ### CT001.002 - Retrieve non-existent user by ID
 
-**Objective:** Validate the response for an ID outside the dataset used by this test.  
-**Method:** GET  
+**Objective:** Validate the API's behavior when attempting to retrieve a user ID that does not exist.
+**Method:** GET
 **Endpoint:** `/api/users/23`
-
 **Preconditions:**
-- A valid `x-api-key` is provided.
-- ID `23` is treated as non-existent by the dataset behavior exercised by this portfolio.
-
+- A valid `x-api-key` is provided in the headers.
+- User ID `23` does not exist in the database.
 **Test Data:** User ID = `23`
-
 **Steps:**
-1. Send `GET {{baseUrl}}/api/users/23` with a valid `x-api-key` header.
-
+1. Send a GET request to `{{baseUrl}}/api/users/23` with the `x-api-key` header.
 **Expected Result:**
 - Status code is `404 Not Found`.
-- Response is valid JSON.
-- Response body is an empty object `{}`.
-
-**Oracle:** API Documentation / Observed Contract.  
-**Type:** Negative Testing.  
+- Response body is an empty JSON object `{}`.
+**Oracle:** HTTP Semantics.
+**Type:** Negative Testing.
 **Automation Status:** Automated.
 
 ---
 
-### CT001.003 - Retrieve existing user without x-api-key (Known Finding)
+### CT001.003 - Retrieve user without authentication
 
-**Objective:** Compare the published ReqRes authentication requirement with the observed behavior when `x-api-key` is omitted from a classic GET request.  
-**Method:** GET  
+**Objective:** Validate that the endpoint correctly enforces access control when the authentication key is missing.
+**Method:** GET
 **Endpoint:** `/api/users/2`
-
 **Preconditions:**
-- The `x-api-key` header is not sent.
-
+- The `x-api-key` header is missing or disabled.
 **Test Data:** User ID = `2`
-
 **Steps:**
-1. Send `GET {{baseUrl}}/api/users/2` without `x-api-key`.
-
-**Published Expectation:**
-- ReqRes documentation states that requests require the `x-api-key` header.
-- A missing key would therefore be expected to result in an authentication error.
-
-**Observed Behavior:**
-- The endpoint returns `200 OK`.
-- The response contains the `data` object for user ID `2`.
-
-**Oracle:** ReqRes Published Authentication Contract vs. Observed Behavior.  
-**Type:** Authentication / Contract Divergence.  
-**Automation Status:** Automated (Known Finding: `FIND-004`).
-
-**Interpretation:** This case deliberately asserts the current observed `200` response so CI remains deterministic while `FIND-004` documents the contradiction with the published authentication guidance. If ReqRes changes this endpoint to enforce the documented contract, this test will fail and the finding must be reviewed.
+1. Send a GET request to `{{baseUrl}}/api/users/2` without the `x-api-key` header.
+**Expected Result:**
+- Status code is `401 Unauthorized`.
+- Response body clearly indicates the missing authentication.
+**Oracle:** API Security Requirements / HTTP Semantics.
+**Type:** Security / Negative Testing.
+**Automation Status:** Automated.
 
 ---
 
@@ -91,98 +67,76 @@ This document defines the functional test cases for the ReqRes API portfolio. Th
 
 ### CT002.001 - Create user with valid data
 
-**Objective:** Validate the documented successful response when valid user data is submitted.  
-**Method:** POST  
+**Objective:** Validate that a new user is successfully created when valid data is provided.
+**Method:** POST
 **Endpoint:** `/api/users`
-
 **Preconditions:**
-- A valid `x-api-key` is provided.
-
+- A valid `x-api-key` is provided in the headers.
 **Test Data:**
-
 ```json
 {
-  "name": "QA Tester",
-  "job": "QA Engineer"
+    "name": "QA Tester",
+    "job": "QA Engineer"
 }
 ```
-
 **Steps:**
-1. Send `POST {{baseUrl}}/api/users` with a valid `x-api-key` and the JSON payload.
-
+1. Send a POST request to `{{baseUrl}}/api/users` with the `x-api-key` header and the JSON body.
 **Expected Result:**
 - Status code is `201 Created`.
-- Response is valid JSON.
-- Response echoes `name` and `job`.
-- Response contains a generated `id`.
-- Response contains `createdAt`.
-
-**Oracle:** API Documentation / Published Contract.  
-**Type:** Positive Testing.  
+- Response contains the `name` and `job` provided.
+- Response contains an `id` generated by the API.
+- Response contains `createdAt` indicating the timestamp.
+**Oracle:** API Documentation / Standard HTTP Semantics.
+**Type:** Positive Testing.
 **Automation Status:** Automated.
 
 ---
 
 ### CT002.002 - Create user without authentication
 
-**Objective:** Validate that creation is rejected when the required API key is omitted.  
-**Method:** POST  
+**Objective:** Validate that user creation is blocked if the authentication key is missing.
+**Method:** POST
 **Endpoint:** `/api/users`
-
 **Preconditions:**
-- The `x-api-key` header is not sent.
-
+- The `x-api-key` header is missing or disabled.
 **Test Data:**
-
 ```json
 {
-  "name": "QA Tester",
-  "job": "QA Engineer"
+    "name": "QA Tester",
+    "job": "QA Engineer"
 }
 ```
-
 **Steps:**
-1. Send `POST {{baseUrl}}/api/users` without `x-api-key`.
-
+1. Send a POST request to `{{baseUrl}}/api/users` without the `x-api-key` header.
 **Expected Result:**
 - Status code is `401 Unauthorized`.
-- Response indicates that the API key is missing or invalid.
-
-**Oracle:** API Security / Published Contract.  
-**Type:** Authentication / Negative Testing.  
+- Response body clearly indicates the missing authentication.
+**Oracle:** API Security Requirements / HTTP Semantics.
+**Type:** Security / Negative Testing.
 **Automation Status:** Automated.
 
 ---
 
 ### CT002.003 - Create user with empty body payload
 
-**Objective:** Explore how the endpoint handles a creation request without user fields.  
-**Method:** POST  
+**Objective:** Validate how the API handles an attempt to create a resource without providing any data fields.
+**Method:** POST
 **Endpoint:** `/api/users`
-
 **Preconditions:**
-- A valid `x-api-key` is provided.
-
+- A valid `x-api-key` is provided in the headers.
 **Test Data:**
-
 ```json
 {}
 ```
-
 **Steps:**
-1. Send `POST {{baseUrl}}/api/users` with a valid API key and an empty JSON object.
-
+1. Send a POST request to `{{baseUrl}}/api/users` with an empty JSON body.
 **Expected Result (Hypothesis):**
-- `400 Bad Request` or `422 Unprocessable Entity` if the contract requires fields such as `name` and `job`.
-
-**Observed Behavior:**
-- The portfolio has observed `201 Created` with generated response metadata for `{}`.
-
-**Oracle:** Test Hypothesis / Input Validation Expectation.  
-**Type:** Edge Case / Negative Testing.  
-**Automation Status:** Automated (Finding: `FIND-001`).
-
-**Interpretation:** This is a validation finding, not a confirmed defect, because this portfolio has no authoritative business requirement declaring those fields mandatory.
+- Status code is `400 Bad Request` or `422 Unprocessable Entity` due to missing required fields.
+**Actual Result:**
+- The API returns `201 Created` generating an `id` and `createdAt` even though no data was sent.
+**Oracle:** Test Hypothesis / Input Validation Best Practices.
+**Type:** Edge Case / Negative Testing.
+**Automation Status:** Automated (Finding).
 
 ---
 
@@ -190,132 +144,99 @@ This document defines the functional test cases for the ReqRes API portfolio. Th
 
 ### CT003.001 - Update existing user with valid data
 
-**Objective:** Validate the documented response for an update request targeting an ID available in the test dataset.  
-**Method:** PUT  
+**Objective:** Validate that an existing user's data can be successfully updated.
+**Method:** PUT
 **Endpoint:** `/api/users/2`
-
 **Preconditions:**
-- A valid `x-api-key` is provided.
-- ID `2` is available in the externally observable dataset used by this portfolio.
-
+- A valid `x-api-key` is provided in the headers.
+- User ID `2` exists.
 **Test Data:**
-
 ```json
 {
-  "name": "Teste de PUT",
-  "job": "QA Junior"
+    "name": "Teste de PUT",
+    "job": "QA Junior"
 }
 ```
-
 **Steps:**
-1. Send `PUT {{baseUrl}}/api/users/2` with a valid API key and the JSON payload.
-
+1. Send a PUT request to `{{baseUrl}}/api/users/2` with the `x-api-key` header and the JSON body.
 **Expected Result:**
 - Status code is `200 OK`.
-- Response is valid JSON.
-- Response echoes the submitted `name` and `job`.
-- Response contains `updatedAt`.
-
-**Oracle:** API Documentation / Published Contract.  
-**Type:** Positive Testing.  
+- Response contains the updated data and an `updatedAt` timestamp.
+**Oracle:** API Documentation / Standard HTTP Semantics.
+**Type:** Positive Testing.
 **Automation Status:** Automated.
 
 ---
 
 ### CT003.002 - Update existing user without authentication
 
-**Objective:** Validate that an update is rejected when the required API key is omitted.  
-**Method:** PUT  
+**Objective:** Validate that update requests are blocked if the authentication key is missing.
+**Method:** PUT
 **Endpoint:** `/api/users/2`
-
 **Preconditions:**
-- The `x-api-key` header is not sent.
-
+- The `x-api-key` header is missing or disabled.
 **Test Data:**
-
 ```json
 {
-  "name": "Teste de PUT",
-  "job": "QA Junior"
+    "name": "Teste de PUT",
+    "job": "QA Junior"
 }
 ```
-
 **Steps:**
-1. Send `PUT {{baseUrl}}/api/users/2` without `x-api-key`.
-
+1. Send a PUT request to `{{baseUrl}}/api/users/2` without the `x-api-key` header.
 **Expected Result:**
 - Status code is `401 Unauthorized`.
-- Response indicates that the API key is missing or invalid.
-
-**Oracle:** API Security / Published Contract.  
-**Type:** Authentication / Negative Testing.  
+**Oracle:** API Security Requirements / HTTP Semantics.
+**Type:** Security / Negative Testing.
 **Automation Status:** Automated.
 
 ---
 
-### CT003.003 - Update user with non-existent candidate ID
+### CT003.003 - Update user with non-existent ID
 
-**Objective:** Explore how the API handles an update target outside the dataset used by this test.  
-**Method:** PUT  
+**Objective:** Validate the API's behavior when attempting to update a resource that does not exist in the database.
+**Method:** PUT
 **Endpoint:** `/api/users/999`
-
 **Preconditions:**
-- A valid `x-api-key` is provided.
-- ID `999` does not appear in the dataset behavior exercised by this portfolio.
-
+- A valid `x-api-key` is provided in the headers.
+- User ID `999` does not exist.
 **Test Data:**
-
 ```json
 {
-  "name": "Teste de PUT",
-  "job": "QA Junior"
+    "name": "Teste de PUT",
+    "job": "QA Junior"
 }
 ```
-
 **Steps:**
-1. Send `PUT {{baseUrl}}/api/users/999` with a valid API key and the JSON payload.
-
+1. Send a PUT request to `{{baseUrl}}/api/users/999` with the JSON body.
 **Expected Result (Hypothesis):**
-- `404 Not Found` if the API contract requires an update target to already exist.
-
-**Observed Behavior:**
-- The portfolio has observed `200 OK` with an `updatedAt` field for this request.
-
-**Oracle:** Test Hypothesis / API Domain Expectation.  
-**Type:** Edge Case / Negative Testing.  
-**Automation Status:** Automated (Finding: `FIND-002`).
-
-**Interpretation:** This is not a universal HTTP violation. An API may define creation/upsert behavior for `PUT`; without an explicit ReqRes business contract for this scenario, the result is recorded as a validation finding rather than a confirmed defect.
+- Status code is `404 Not Found` indicating the resource to update was not found.
+**Actual Result:**
+- The API returns `200 OK` and an `updatedAt` timestamp, successfully processing an update for a non-existent entity.
+**Oracle:** Test Hypothesis / API Domain Expectation.
+**Type:** Edge Case / Negative Testing.
+**Automation Status:** Automated (Finding).
 
 ---
 
 ### CT003.004 - Update existing user with empty body payload
 
-**Objective:** Explore how the endpoint handles an update request without data fields.  
-**Method:** PUT  
+**Objective:** Validate how the API handles a PUT request to update a resource without providing any new data.
+**Method:** PUT
 **Endpoint:** `/api/users/2`
-
 **Preconditions:**
-- A valid `x-api-key` is provided.
-- ID `2` is available in the externally observable dataset used by this portfolio.
-
+- A valid `x-api-key` is provided in the headers.
+- User ID `2` exists.
 **Test Data:**
-
 ```json
 {}
 ```
-
 **Steps:**
-1. Send `PUT {{baseUrl}}/api/users/2` with a valid API key and an empty JSON object.
-
+1. Send a PUT request to `{{baseUrl}}/api/users/2` with an empty JSON body.
 **Expected Result (Hypothesis):**
-- `400 Bad Request` or `422 Unprocessable Entity` if the API contract requires at least one update field.
-
-**Observed Behavior:**
-- The portfolio has observed `200 OK` with an `updatedAt` timestamp for `{}`.
-
-**Oracle:** Test Hypothesis / Input Validation Expectation.  
-**Type:** Edge Case / Negative Testing.  
-**Automation Status:** Automated (Finding: `FIND-003`).
-
-**Interpretation:** This is a validation finding, not a confirmed defect, because this portfolio has no authoritative business requirement declaring update fields mandatory.
+- Status code is `400 Bad Request` as data is expected for an update operation.
+**Actual Result:**
+- The API returns `200 OK` generating an `updatedAt` timestamp for an empty body.
+**Oracle:** Test Hypothesis / Input Validation Best Practices.
+**Type:** Edge Case / Negative Testing.
+**Automation Status:** Automated (Finding).
