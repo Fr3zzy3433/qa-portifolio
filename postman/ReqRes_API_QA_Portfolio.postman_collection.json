@@ -39,25 +39,10 @@
                             "listen": "test",
                             "script": {
                                 "exec": [
-                                    "let isKeyError = false;",
-                                    "try {",
-                                    "    const resCode = pm.response.code;",
-                                    "    const resJson = pm.response.json();",
-                                    "    if ((resCode === 401 || resCode === 403) && resJson && resJson.error && resJson.error.includes('api_key')) {",
-                                    "        isKeyError = true;",
-                                    "    }",
-                                    "} catch (e) {}",
-                                    "",
-                                    "if (isKeyError) {",
-                                    "    pm.test('API Key missing/invalid. Skipping functional assertions to keep CI green.', function () {",
-                                    "        pm.expect(true).to.be.true;",
-                                    "    });",
-                                    "} else {",
-                                    "    pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
-                                    "    pm.test('Response must be valid JSON and have a body', function () { pm.response.to.be.withBody; pm.response.to.be.json; });",
-                                    "    pm.test('Response contains data object', function () { pm.expect(pm.response.json()).to.have.property('data'); });",
-                                    "    pm.test('Returned user ID matches request (2)', function () { const jsonData = pm.response.json(); if (jsonData.data) { pm.expect(jsonData.data.id).to.eql(2); } });",
-                                    "}"
+                                    "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                                    "pm.test('Response must be valid JSON and have a body', function () { pm.response.to.be.withBody; pm.response.to.be.json; });",
+                                    "pm.test('Response contains data object', function () { pm.expect(pm.response.json()).to.have.property('data'); });",
+                                    "pm.test('Returned user ID matches request (2)', function () { const jsonData = pm.response.json(); if (jsonData.data) { pm.expect(jsonData.data.id).to.eql(2); } });"
                                 ],
                                 "type": "text/javascript"
                             }
@@ -93,24 +78,9 @@
                             "listen": "test",
                             "script": {
                                 "exec": [
-                                    "let isKeyError = false;",
-                                    "try {",
-                                    "    const resCode = pm.response.code;",
-                                    "    const resJson = pm.response.json();",
-                                    "    if ((resCode === 401 || resCode === 403) && resJson && resJson.error && resJson.error.includes('api_key')) {",
-                                    "        isKeyError = true;",
-                                    "    }",
-                                    "} catch (e) {}",
-                                    "",
-                                    "if (isKeyError) {",
-                                    "    pm.test('API Key missing/invalid. Skipping functional assertions to keep CI green.', function () {",
-                                    "        pm.expect(true).to.be.true;",
-                                    "    });",
-                                    "} else {",
-                                    "    pm.test('Status code is 404', function () { pm.response.to.have.status(404); });",
-                                    "    pm.test('Response body is valid JSON', function () { pm.response.to.be.json; });",
-                                    "    pm.test('Response body is empty object', function () { const jsonData = pm.response.json(); pm.expect(Object.keys(jsonData).length).to.eql(0); });",
-                                    "}"
+                                    "pm.test('Status code is 404', function () { pm.response.to.have.status(404); });",
+                                    "pm.test('Response body is valid JSON', function () { pm.response.to.be.json; });",
+                                    "pm.test('Response body is empty object', function () { const jsonData = pm.response.json(); pm.expect(Object.keys(jsonData).length).to.eql(0); });"
                                 ],
                                 "type": "text/javascript"
                             }
@@ -190,26 +160,11 @@
                             "listen": "test",
                             "script": {
                                 "exec": [
-                                    "let isKeyError = false;",
-                                    "try {",
-                                    "    const resCode = pm.response.code;",
-                                    "    const resJson = pm.response.json();",
-                                    "    if ((resCode === 401 || resCode === 403) && resJson && resJson.error && resJson.error.includes('api_key')) {",
-                                    "        isKeyError = true;",
-                                    "    }",
-                                    "} catch (e) {}",
-                                    "",
-                                    "if (isKeyError) {",
-                                    "    pm.test('API Key missing/invalid. Skipping functional assertions to keep CI green.', function () {",
-                                    "        pm.expect(true).to.be.true;",
-                                    "    });",
-                                    "} else {",
-                                    "    pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
-                                    "    pm.test('Response must be valid JSON', function () { pm.response.to.be.json; });",
-                                    "    pm.test('Response contains generated id', function () { pm.expect(pm.response.json()).to.have.property('id'); });",
-                                    "    pm.test('Response contains createdAt timestamp', function () { pm.expect(pm.response.json()).to.have.property('createdAt'); });",
-                                    "    pm.test('Response data matches request data', function () { const res = pm.response.json(); pm.expect(res.name).to.eql('QA Tester'); pm.expect(res.job).to.eql('QA Engineer'); });",
-                                    "}"
+                                    "pm.test('Status code is 201', function () { pm.response.to.have.status(201); });",
+                                    "pm.test('Response must be valid JSON', function () { pm.response.to.be.json; });",
+                                    "pm.test('Response contains generated id', function () { pm.expect(pm.response.json()).to.have.property('id'); });",
+                                    "pm.test('Response contains createdAt timestamp', function () { pm.expect(pm.response.json()).to.have.property('createdAt'); });",
+                                    "pm.test('Response data matches request data', function () { const res = pm.response.json(); pm.expect(res.name).to.eql('QA Tester'); pm.expect(res.job).to.eql('QA Engineer'); });"
                                 ],
                                 "type": "text/javascript"
                             }
@@ -299,23 +254,8 @@
                             "listen": "test",
                             "script": {
                                 "exec": [
-                                    "let isKeyError = false;",
-                                    "try {",
-                                    "    const resCode = pm.response.code;",
-                                    "    const resJson = pm.response.json();",
-                                    "    if ((resCode === 401 || resCode === 403) && resJson && resJson.error && resJson.error.includes('api_key')) {",
-                                    "        isKeyError = true;",
-                                    "    }",
-                                    "} catch (e) {}",
-                                    "",
-                                    "if (isKeyError) {",
-                                    "    pm.test('API Key missing/invalid. Skipping functional assertions to keep CI green.', function () {",
-                                    "        pm.expect(true).to.be.true;",
-                                    "    });",
-                                    "} else {",
-                                    "    // Validation Finding: The API accepts an empty payload to create a user and returns 201 Created instead of 400 Bad Request.",
-                                    "    pm.test('Validation Finding (Actual Behavior): Status code is 201', function () { pm.response.to.have.status(201); });",
-                                    "}"
+                                    "// Validation Finding: The API accepts an empty payload to create a user and returns 201 Created instead of 400 Bad Request.",
+                                    "pm.test('Validation Finding (Actual Behavior): Status code is 201', function () { pm.response.to.have.status(201); });"
                                 ],
                                 "type": "text/javascript"
                             }
@@ -365,25 +305,10 @@
                             "listen": "test",
                             "script": {
                                 "exec": [
-                                    "let isKeyError = false;",
-                                    "try {",
-                                    "    const resCode = pm.response.code;",
-                                    "    const resJson = pm.response.json();",
-                                    "    if ((resCode === 401 || resCode === 403) && resJson && resJson.error && resJson.error.includes('api_key')) {",
-                                    "        isKeyError = true;",
-                                    "    }",
-                                    "} catch (e) {}",
-                                    "",
-                                    "if (isKeyError) {",
-                                    "    pm.test('API Key missing/invalid. Skipping functional assertions to keep CI green.', function () {",
-                                    "        pm.expect(true).to.be.true;",
-                                    "    });",
-                                    "} else {",
-                                    "    pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
-                                    "    pm.test('Response must be valid JSON', function () { pm.response.to.be.json; });",
-                                    "    pm.test('Response contains updatedAt timestamp', function () { pm.expect(pm.response.json()).to.have.property('updatedAt'); });",
-                                    "    pm.test('Response data matches request data', function () { const res = pm.response.json(); pm.expect(res.name).to.eql('Teste de PUT'); pm.expect(res.job).to.eql('QA Junior'); });",
-                                    "}"
+                                    "pm.test('Status code is 200', function () { pm.response.to.have.status(200); });",
+                                    "pm.test('Response must be valid JSON', function () { pm.response.to.be.json; });",
+                                    "pm.test('Response contains updatedAt timestamp', function () { pm.expect(pm.response.json()).to.have.property('updatedAt'); });",
+                                    "pm.test('Response data matches request data', function () { const res = pm.response.json(); pm.expect(res.name).to.eql('Teste de PUT'); pm.expect(res.job).to.eql('QA Junior'); });"
                                 ],
                                 "type": "text/javascript"
                             }
@@ -465,24 +390,9 @@
                             "listen": "test",
                             "script": {
                                 "exec": [
-                                    "let isKeyError = false;",
-                                    "try {",
-                                    "    const resCode = pm.response.code;",
-                                    "    const resJson = pm.response.json();",
-                                    "    if ((resCode === 401 || resCode === 403) && resJson && resJson.error && resJson.error.includes('api_key')) {",
-                                    "        isKeyError = true;",
-                                    "    }",
-                                    "} catch (e) {}",
-                                    "",
-                                    "if (isKeyError) {",
-                                    "    pm.test('API Key missing/invalid. Skipping functional assertions to keep CI green.', function () {",
-                                    "        pm.expect(true).to.be.true;",
-                                    "    });",
-                                    "} else {",
-                                    "    // Validation Finding: The API allows updating a non-existent ID (999) and returns 200 OK instead of 404 Not Found.",
-                                    "    pm.test('Validation Finding (Actual Behavior): Status code is 200', function () { pm.response.to.have.status(200); });",
-                                    "    pm.test('Response contains updatedAt timestamp', function () { pm.expect(pm.response.json()).to.have.property('updatedAt'); });",
-                                    "}"
+                                    "    // Validation Finding: The API allows updating an ID (999) that does not appear in the queryable dataset, returning 200 OK instead of rejecting it.",
+                                    "pm.test('Validation Finding (Actual Behavior): Status code is 200', function () { pm.response.to.have.status(200); });",
+                                    "pm.test('Response contains updatedAt timestamp', function () { pm.expect(pm.response.json()).to.have.property('updatedAt'); });"
                                 ],
                                 "type": "text/javascript"
                             }
@@ -527,24 +437,9 @@
                             "listen": "test",
                             "script": {
                                 "exec": [
-                                    "let isKeyError = false;",
-                                    "try {",
-                                    "    const resCode = pm.response.code;",
-                                    "    const resJson = pm.response.json();",
-                                    "    if ((resCode === 401 || resCode === 403) && resJson && resJson.error && resJson.error.includes('api_key')) {",
-                                    "        isKeyError = true;",
-                                    "    }",
-                                    "} catch (e) {}",
-                                    "",
-                                    "if (isKeyError) {",
-                                    "    pm.test('API Key missing/invalid. Skipping functional assertions to keep CI green.', function () {",
-                                    "        pm.expect(true).to.be.true;",
-                                    "    });",
-                                    "} else {",
-                                    "    // Validation Finding: The API accepts an empty payload for a PUT request and returns 200 OK instead of 400 Bad Request.",
-                                    "    pm.test('Validation Finding (Actual Behavior): Status code is 200', function () { pm.response.to.have.status(200); });",
-                                    "    pm.test('Response contains updatedAt timestamp', function () { pm.expect(pm.response.json()).to.have.property('updatedAt'); });",
-                                    "}"
+                                    "// Validation Finding: The API accepts an empty payload for a PUT request and returns 200 OK instead of 400 Bad Request.",
+                                    "pm.test('Validation Finding (Actual Behavior): Status code is 200', function () { pm.response.to.have.status(200); });",
+                                    "pm.test('Response contains updatedAt timestamp', function () { pm.expect(pm.response.json()).to.have.property('updatedAt'); });"
                                 ],
                                 "type": "text/javascript"
                             }

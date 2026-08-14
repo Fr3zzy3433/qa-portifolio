@@ -210,10 +210,10 @@ This document defines the functional test cases for the ReqRes API. These scenar
 **Steps:**
 1. Send a PUT request to `{{baseUrl}}/api/users/999` with the JSON body.
 **Expected Result (Hypothesis):**
-- Status code is `404 Not Found` indicating the resource to update was not found.
+- The API should reject the update, as the ID provided does not exist in the queryable dataset.
 **Actual Result:**
-- The API returns `200 OK` and an `updatedAt` timestamp, successfully processing an update for a non-existent entity.
-**Oracle:** HTTP Semantics (RFC 7231).
+- The API returns `200 OK` and an `updatedAt` timestamp, successfully processing an update for an entity that does not appear in the queryable dataset.
+**Oracle:** Test Hypothesis / API Domain Expectation.
 **Type:** Edge Case / Negative Testing.
 **Automation Status:** Automated (Finding).
 
