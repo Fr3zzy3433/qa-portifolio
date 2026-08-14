@@ -1,18 +1,21 @@
 # ReqRes API QA Portfolio
 
-Portfolio project focused on API test design, positive and negative scenarios, automated Postman assertions, authentication validation, and structured documentation using the ReqRes public API.
+Portfolio project focused on API test design, positive and negative scenarios, automated Postman assertions, authentication validation, traceability, and CI execution using the ReqRes API.
 
 ## Project Goal
-This repository serves as a professional technical showcase of API testing skills. It demonstrates how to structure test cases, design contract-based assertions using Postman and Newman, identify boundary conditions, log exploratory findings without breaking automated CI pipelines, and document everything using a clear, scalable structure.
+
+This repository is a technical QA showcase. It demonstrates how to structure test cases, automate API validations with Postman/Newman, separate confirmed behavior from test hypotheses, document findings without overstating them as defects, and run the suite consistently in local and CI environments.
 
 ## Test Scope
-The scope includes functional validation of the **Users** resource of the ReqRes API.
-It covers:
+
+The scope covers the **Users** resource of the ReqRes API:
+
 - `GET`, `POST`, and `PUT` methods.
-- Positive testing (Happy path).
-- Negative testing (Invalid IDs, Missing authentication).
-- Input validation (Empty payloads).
-- Edge cases (Updating non-existent resources).
+- Positive testing / happy paths.
+- Negative testing, including missing authentication and non-existent IDs.
+- Input-validation hypotheses using empty payloads.
+- Edge-case analysis.
+- Traceability between documented cases, automated requests, and findings.
 
 ## Current Coverage
 
@@ -23,57 +26,142 @@ It covers:
 | **CT001.003** | GET | `/api/users/{id}` | Retrieve user without authentication | Negative | API Security |
 | **CT002.001** | POST | `/api/users` | Create user with valid data | Positive | API Documentation |
 | **CT002.002** | POST | `/api/users` | Create user without authentication | Negative | API Security |
-| **CT002.003** | POST | `/api/users` | Create user with empty body payload | Negative/Edge | Test Hypothesis |
+| **CT002.003** | POST | `/api/users` | Create user with empty body payload | Negative / Edge | Test Hypothesis |
 | **CT003.001** | PUT | `/api/users/{id}` | Update existing user with valid data | Positive | API Documentation |
 | **CT003.002** | PUT | `/api/users/{id}` | Update existing user without authentication | Negative | API Security |
-| **CT003.003** | PUT | `/api/users/{id}` | Update user with non-existent ID | Negative/Edge | Test Hypothesis / API Domain Expectation |
-| **CT003.004** | PUT | `/api/users/{id}` | Update existing user with empty body payload | Negative/Edge | Test Hypothesis |
+| **CT003.003** | PUT | `/api/users/{id}` | Update user with non-existent ID | Negative / Edge | Test Hypothesis / API Domain Expectation |
+| **CT003.004** | PUT | `/api/users/{id}` | Update existing user with empty body payload | Negative / Edge | Test Hypothesis |
 
-## Project Architecture
+## Project Structure
 
-```
+```text
 /
-├── README.md                                        # This file
-├── .gitignore                                       # Ignored files
+├── README.md
+├── .env.example
+├── .gitignore
+├── package.json
+├── package-lock.json
+├── scripts/
+│   └── run-api-tests.js
 ├── postman/
-│   ├── ReqRes_API_QA_Portfolio.postman_collection.json # Automated test cases
-│   └── ReqRes_API_QA_Portfolio.environment.example.json # Template for env variables
+│   ├── ReqRes_API_QA_Portfolio.postman_collection.json
+│   └── ReqRes_API_QA_Portfolio.environment.example.json
 ├── test-cases/
-│   └── test-cases.md                                # Detailed test scenarios
+│   └── test-cases.md
 ├── docs/
-│   ├── test-strategy.md                             # Scope, approaches, and limitations
-│   ├── test-findings.md                             # Detailed behavior divergence logs
-│   └── traceability-matrix.md                       # Mapping tests to requirements
+│   ├── test-strategy.md
+│   ├── test-findings.md
+│   └── traceability-matrix.md
 └── .github/
     └── workflows/
-        └── api-tests.yml                            # GitHub Actions CI pipeline
+        └── api-tests.yml
 ```
 
-## Running the Tests
+## Prerequisites
 
-To run the automated tests locally, you need [Node.js](https://nodejs.org/) installed.
+- Node.js 20 or newer for local execution.
+- A valid ReqRes API key.
+
+The API key is never committed to this repository.
+
+## Running Locally
 
 1. Install dependencies:
+
    ```bash
    npm ci
    ```
-2. Configure the API Key:
-   Create a `.env` file in the root directory and add your API key (do not commit this file):
-   ```env
-   REQRES_API_KEY=your_api_key_here
+
+2. Create your local environment file.
+
+   **Windows PowerShell:**
+
+   ```powershell
+   Copy-Item .env.example .env
    ```
-3. Run the tests:
+
+   **macOS / Linux:**
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Open `.env` and replace the placeholder with a valid key:
+
+   ```env
+   REQRES_API_KEY=your_real_key_here
+   ```
+
+4. Execute the suite:
+
    ```bash
    npm run test:api
    ```
 
+`npm run test` runs the same API suite.
+
+The Node runner loads `.env` locally and injects the key into Newman without relying on shell-specific environment-variable syntax, so the command works consistently on Windows, macOS, Linux, and GitHub Actions.
+
 ## Environment Variables
 
-The Postman collection is fully parameterized. Do not commit real secrets or API keys.
-- `{{baseUrl}}`: The base URL of the API (e.g., `https://reqres.in`).
-- `{{api-key}}`: The authorization key required to interact with the endpoints. This must be injected via CLI or a local environment file.
+The collection is parameterized with:
 
-## Test Findings and CI/CD
+- `{{baseUrl}}` — ReqRes base URL.
+- `{{api-key}}` — API key injected at execution time.
 
-Exploratory findings (e.g., the API returning `201 Created` for an empty payload instead of `400 Bad Request`) are actively documented in `docs/test-findings.md`.
-To maintain a reliable Continuous Integration (CI) pipeline, the automated Postman assertions test the *actual observed behavior* for these known findings, ensuring the build remains green while the architectural issues are tracked transparently in the documentation.
+A missing or placeholder API key causes the run to fail. Authentication/configuration failures are never converted into passing assertions.
+
+## CI with GitHub Actions
+
+The workflow in `.github/workflows/api-tests.yml` runs on pull requests and pushes to `main`.
+
+Before the workflow can pass, configure the repository secret:
+
+1. Open **Settings** in the GitHub repository.
+2. Go to **Secrets and variables > Actions**.
+3. Create a repository secret named exactly `REQRES_API_KEY`.
+4. Store a valid ReqRes API key as its value.
+
+The CI pipeline:
+
+1. Checks out the repository.
+2. Uses Node.js 24.
+3. Verifies that `REQRES_API_KEY` is configured.
+4. Installs dependencies reproducibly with `npm ci`.
+5. Executes the Newman suite through `npm run test:api`.
+6. Returns a non-zero exit code whenever the test run contains failures.
+
+## Findings vs. Confirmed Defects
+
+ReqRes is an external testing API and this portfolio does not own its business requirements. For that reason, unexpected responses are not automatically labeled as bugs.
+
+The documentation distinguishes among:
+
+- documented API expectations;
+- security expectations;
+- test hypotheses;
+- observed behavior / validation findings.
+
+Examples such as accepting an empty payload or allowing a `PUT` against a non-existent ID are documented in `docs/test-findings.md`. Their automated checks record the currently observed behavior while the documentation preserves the original hypothesis and explains the gap. A configuration failure, authentication failure, or unexpected regression still fails the pipeline.
+
+## Documentation
+
+- `test-cases/test-cases.md` — detailed test scenarios and expected/observed results.
+- `docs/test-strategy.md` — scope, approach, risks, and limitations.
+- `docs/test-findings.md` — documented behavioral findings.
+- `docs/traceability-matrix.md` — mapping between test cases, Postman requests, oracles, and findings.
+
+## Technologies
+
+- Postman
+- Newman
+- Node.js
+- GitHub Actions
+- REST / JSON
+
+## Author
+
+**Marcius Logan Barcellos**  
+QA Analyst Júnior
+
+GitHub: `github.com/Fr3zzy3433`
